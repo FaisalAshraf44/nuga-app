@@ -18,21 +18,21 @@ class Home extends Component {
                 },
                 {
                     image: Images.auth_bg,
-                    title: 'Hero World Challenge',
+                    title: 'Golf Fever',
                     location: 'Albany Golf club',
                     date: '22',
                     month: 'Jun'
                 },
                 {
                     image: Images.auth_bg,
-                    title: 'Hero World Challenge',
+                    title: 'Rush In',
                     location: 'Albany Golf club',
                     date: '22',
                     month: 'Jun'
                 },
                 {
                     image: Images.auth_bg,
-                    title: 'Hero World Challenge',
+                    title: 'Go For Golf',
                     location: 'Albany Golf club',
                     date: '22',
                     month: 'Jun'

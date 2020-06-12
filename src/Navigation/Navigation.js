@@ -142,14 +142,14 @@ function Navigation() {
         }, 2000);
     }, [])
 
-    // if (isLoading) {
-    //     return <Splash />
-    // }
+    if (isLoading) {
+        return <Splash />
+    }
 
     return (
         <NavigationContainer>
             <Stack.Navigator
-                initialRouteName="App"
+            // initialRouteName="App"
             >
                 <Stack.Screen
                     name="Auth"

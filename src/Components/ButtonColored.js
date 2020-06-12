@@ -13,7 +13,7 @@ class ButtonColored extends Component {
     render() {
         const { text, onPress, buttonStyle, textStyle, iconName, iconType, iconSize, iconColor, iconStyle } = this.props
         return (
-            <TouchableOpacity activeOpacity={1} onPress={onPress} style={[AppStyles.buttonColord, AppStyles.shadow, { borderRadius: 10 }, buttonStyle]}>
+            <TouchableOpacity  onPress={onPress} style={[AppStyles.buttonColord, AppStyles.shadow, { borderRadius: 10 }, buttonStyle]}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     {
                         iconName ?
