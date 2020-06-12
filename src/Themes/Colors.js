@@ -29,7 +29,7 @@ const colors = {
   appGradiantColors1: ['#FFFFFF', '#FFFFFF40'],
 
   appColor1: '#92D050',
-  appColor2: 'rgba(214,48,49, 1)',
+  appColor2: '#00B050',
 
   appTextColor1: '#000000',
   appTextColor2: 'rgba(26,26,26, 1)',
@@ -41,7 +41,9 @@ const colors = {
   appBgColor1: '#FFFF',
   appBgColor2: '#F7F7F7',
   appBgColor3: '#CCCCCC',
-  appBgColor4: '#414141'
+  appBgColor4: '#414141',
+
+  headerBgColor1: '#92D050'
 }
 
 export default colors

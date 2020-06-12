@@ -158,7 +158,7 @@ export default StyleSheet.create({
   },
   headerTitleStyle: {
     fontSize: totalSize(2),
-    color: Colors.appTextColor4,
+    color: Colors.appTextColor6,
     fontFamily: FontFamily.appTextMedium
   },
   cardView: {
@@ -184,6 +184,9 @@ export default StyleSheet.create({
   },
   textGreen: {
     color: Colors.appColor1
+  },
+  textGreen2: {
+    color: Colors.appColor2
   },
   textWhite: {
     color: Colors.appTextColor6

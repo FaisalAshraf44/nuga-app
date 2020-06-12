@@ -27,6 +27,7 @@ class Login extends Component {
     render() {
         const { selected_screen_index, isForgotPasswordModalVisible, isResetPasswordModalVisible } = this.state
         const Screens = ['Login', 'Register']
+        const { navigate } = this.props.navigation
         return (
             <ImageBackground source={Images.auth_bg} style={AppStyles.bgContainer}>
                 <LinearGradient
@@ -66,6 +67,7 @@ class Login extends Component {
                                         <ButtonColored
                                             text="LOGIN"
                                             buttonStyle={{ marginVertical: height(5) }}
+                                            onPress={() => navigate('App')}
                                         />
                                     </View>
                                     :
