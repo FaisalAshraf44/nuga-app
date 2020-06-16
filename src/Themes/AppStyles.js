@@ -90,7 +90,7 @@ export default StyleSheet.create({
     height: height(7),
     width: width(80),
     color: Colors.appTextColor1,
-    fontFamily: FontFamily.appTextLight,
+    fontFamily: FontFamily.appTextRegular,
     fontSize: totalSize(1.75)
   },
   inputFieldBorderd: {

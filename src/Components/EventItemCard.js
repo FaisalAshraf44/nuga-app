@@ -4,6 +4,7 @@ import { AppStyles, Colors } from '../Themes';
 import { height, totalSize, width } from 'react-native-dimension';
 import { Icon } from 'react-native-elements';
 import { ButtonColored } from '.';
+import ButtonColoredSmall from './ButtonColoredSmall';
 
 class EventItemCard extends Component {
     constructor(props) {
@@ -13,9 +14,9 @@ class EventItemCard extends Component {
     }
 
     render() {
-        const { containerStyle, image, title, location, date, month, showButtons } = this.props
+        const { containerStyle, image, title, location, date, month, showButtons ,onPress} = this.props
         return (
-            <TouchableOpacity activeOpacity={1} style={[AppStyles.cardView, AppStyles.shadow, { borderRadius: 10 }, containerStyle]}>
+            <TouchableOpacity onPress={onPress} activeOpacity={1} style={[AppStyles.cardView, AppStyles.shadow, { borderRadius: 10 }, containerStyle]}>
                 <Image
                     source={image}
                     style={{ width: null, height: height(20), borderTopLeftRadius: 10, borderTopRightRadius: 10 }}
@@ -42,21 +43,17 @@ class EventItemCard extends Component {
                 </View>
                 {
                     showButtons ?
-                        <View style={[AppStyles.rowView, { marginBottom: height(2) }]}>
-                            <View style={{ flex: 1 }}>
-                                <ButtonColored
+                        <View style={[AppStyles.rowCompContainer, {marginTop:0}]}>
+                            <ButtonColoredSmall
                                     text="Resgister"
                                     textStyle={[AppStyles.textRegular, AppStyles.textWhite]}
-                                    buttonStyle={[{ height: height(6), backgroundColor: Colors.appColor2 }]}
+                                    buttonStyle={[{ backgroundColor: Colors.appColor2 }]}
                                 />
-                            </View>
-                            <View style={{ flex: 1 }}>
-                                <ButtonColored
+                                <ButtonColoredSmall
                                     text="Resgister & Pay"
                                     textStyle={[AppStyles.textRegular, AppStyles.textWhite]}
-                                    buttonStyle={[{ height: height(6), backgroundColor: Colors.appColor2  }]}
+                                    buttonStyle={[{ backgroundColor: Colors.appColor2 }]}
                                 />
-                            </View>
                         </View>
                         :
                         null

@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity } from 'react-native';
 import { AppStyles, Colors, FontSize } from '../Themes';
 import { width, height, totalSize } from 'react-native-dimension';
 import { Icon } from 'react-native-elements';
-class ButtonColored extends Component {
+class ButtonColoredSmall extends Component {
     constructor(props) {
         super(props);
         this.state = {
@@ -13,7 +13,7 @@ class ButtonColored extends Component {
     render() {
         const { text, onPress, buttonStyle, textStyle, iconName, iconType, iconSize, iconColor, iconStyle } = this.props
         return (
-            <TouchableOpacity  onPress={onPress} style={[AppStyles.buttonColord, AppStyles.shadow, { borderRadius: 10 ,height:height(7)}, buttonStyle]}>
+            <TouchableOpacity  onPress={onPress} style={[ AppStyles.shadow, { borderRadius: 10 ,paddingHorizontal:width(5),paddingVertical:height(1)}, buttonStyle]}>
                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                     {
                         iconName ?
@@ -35,4 +35,4 @@ class ButtonColored extends Component {
     }
 }
 
-export default ButtonColored;
+export default ButtonColoredSmall;

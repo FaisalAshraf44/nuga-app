@@ -8,39 +8,44 @@ class Home extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            upcomming_events: [
-                {
-                    image: Images.auth_bg,
-                    title: 'Hero World Challenge',
-                    location: 'Albany Golf club',
-                    date: '22',
-                    month: 'Jun'
-                },
-                {
-                    image: Images.auth_bg,
-                    title: 'Golf Fever',
-                    location: 'Albany Golf club',
-                    date: '22',
-                    month: 'Jun'
-                },
+            events: [
                 {
                     image: Images.auth_bg,
                     title: 'Rush In',
                     location: 'Albany Golf club',
                     date: '22',
-                    month: 'Jun'
+                    month: 'Jun',
+                    type: 'past'
                 },
                 {
                     image: Images.auth_bg,
                     title: 'Go For Golf',
                     location: 'Albany Golf club',
                     date: '22',
-                    month: 'Jun'
-                }
+                    month: 'Jun',
+                    type: 'past'
+                },
+                {
+                    image: Images.auth_bg,
+                    title: 'Hero World Challenge',
+                    location: 'Albany Golf club',
+                    date: '22',
+                    month: 'Jun',
+                    type: 'past'
+                },
+                {
+                    image: Images.auth_bg,
+                    title: 'Golf Fever',
+                    location: 'Albany Golf club',
+                    date: '22',
+                    month: 'Jun',
+                    type: 'past'
+                },
+
             ]
         };
     }
-    renderEvents = ({ data }) => {
+    renderEvents = ({ data, onPress }) => {
         return (
             <View style={{ flex: 1 }}>
                 <FlatList
@@ -48,6 +53,7 @@ class Home extends Component {
                     renderItem={({ item, index }) => {
                         return (
                             <EventItemCard
+                                onPress={() => onPress(item)}
                                 containerStyle={{ marginTop: index === 0 ? height(2.5) : 0, marginBottom: height(2) }}
                                 image={item.image}
                                 title={item.title}
@@ -62,11 +68,13 @@ class Home extends Component {
         )
     }
     render() {
-        const { upcomming_events } = this.state
+        const { events } = this.state
+        const { navigate } = this.props.navigation
         return (
             <View style={AppStyles.mainContainer}>
                 <this.renderEvents
-                    data={upcomming_events}
+                    data={events}
+                    onPress={(item) => navigate('eventDetail', { item: item })}
                 />
             </View>
         );
