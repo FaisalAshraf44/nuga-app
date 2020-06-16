@@ -21,10 +21,10 @@ class EventItemCard extends Component {
                     source={image}
                     style={{ width: null, height: height(20), borderTopLeftRadius: 10, borderTopRightRadius: 10 }}
                 />
-                <View style={[AppStyles.rowCompContainer, { marginVertical: height(1.5), marginHorizontal: width(2.5) }]}>
-                    <View style={{ flex: 7.5 }}>
+                <View style={[AppStyles.rowCompContainer, { marginVertical: height(1.5), marginHorizontal: width(2.5),alignItems:'stretch' }]}>
+                    <View style={{ flex: 7.5,justifyContent:'space-evenly' }}>
                         <Text style={[AppStyles.h6, AppStyles.textGreen2]}>{title}</Text>
-                        <View style={[AppStyles.rowView, { marginTop: 10 }]}>
+                        <View style={[AppStyles.rowView, {  }]}>
                             <Icon
                                 name="map-marker"
                                 type="material-community"
@@ -35,9 +35,9 @@ class EventItemCard extends Component {
                         </View>
                     </View>
                     <View style={{ flex: 2.5, alignItems: 'flex-end' }}>
-                        <View style={[{ height: totalSize(7.5), width: totalSize(7.5), borderRadius: 100, backgroundColor: Colors.appColor2 }, AppStyles.center]}>
+                        <View style={[{ height: totalSize(10), width: totalSize(10), borderRadius: 100, backgroundColor: Colors.appColor2 }, AppStyles.center]}>
                             <Text style={[AppStyles.h6, AppStyles.textWhite]}>{date}</Text>
-                            <Text style={[AppStyles.textMedium, AppStyles.textWhite]}>{month}</Text>
+                            <Text style={[AppStyles.textMedium, AppStyles.textWhite]}>{month} 2020</Text>
                         </View>
                     </View>
                 </View>
@@ -45,12 +45,12 @@ class EventItemCard extends Component {
                     showButtons ?
                         <View style={[AppStyles.rowCompContainer, {marginTop:0}]}>
                             <ButtonColoredSmall
-                                    text="Resgister"
+                                    text="Register"
                                     textStyle={[AppStyles.textRegular, AppStyles.textWhite]}
                                     buttonStyle={[{ backgroundColor: Colors.appColor2 }]}
                                 />
                                 <ButtonColoredSmall
-                                    text="Resgister & Pay"
+                                    text="Register & Pay"
                                     textStyle={[AppStyles.textRegular, AppStyles.textWhite]}
                                     buttonStyle={[{ backgroundColor: Colors.appColor2 }]}
                                 />

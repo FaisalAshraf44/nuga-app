@@ -121,9 +121,9 @@ class EventDetail extends Component {
                             </View>
                         </View>
                         <View style={{ flex: 2.5, alignItems: 'flex-end' }}>
-                            <View style={[{ height: totalSize(7.5), width: totalSize(7.5), borderRadius: 100, backgroundColor: Colors.appColor2 }, AppStyles.center]}>
+                            <View style={[{ height: totalSize(10), width: totalSize(10), borderRadius: 100, backgroundColor: Colors.appColor2 }, AppStyles.center]}>
                                 <Text style={[AppStyles.h6, AppStyles.textWhite]}>{item.date}</Text>
-                                <Text style={[AppStyles.textMedium, AppStyles.textWhite]}>{item.month}</Text>
+                                <Text style={[AppStyles.textMedium, AppStyles.textWhite]}>{item.month} 2020</Text>
                             </View>
                         </View>
                     </View>
@@ -136,12 +136,12 @@ class EventDetail extends Component {
                         item.type === 'upcomming' ?
                             <View style={[AppStyles.rowCompContainer, {}]}>
                                 <ButtonColoredSmall
-                                    text="Resgister"
+                                    text="Register"
                                     textStyle={[AppStyles.textRegular, AppStyles.textWhite]}
                                     buttonStyle={[{ backgroundColor: Colors.appColor2 }]}
                                 />
                                 <ButtonColoredSmall
-                                    text="Resgister & Pay"
+                                    text="Register & Pay"
                                     textStyle={[AppStyles.textRegular, AppStyles.textWhite]}
                                     buttonStyle={[{ backgroundColor: Colors.appColor2 }]}
                                 />

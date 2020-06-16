@@ -57,7 +57,7 @@ export default StyleSheet.create({
     color: Colors.appTextColor1,
     fontFamily: FontFamily.appTextRegular
   },
-  textTint: {
+  textTiny: {
     fontSize: FontSize.tiny,
     color: Colors.appTextColor1,
     fontFamily: FontFamily.appTextRegular
