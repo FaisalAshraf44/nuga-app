@@ -92,7 +92,7 @@ class Login extends Component {
                                             containerStyle={{ marginTop: height(2) }}
                                         />
                                         <View style={[AppStyles.compContainer, { marginVertical: height(1.5) }]}>
-                                            <Text style={[AppStyles.textRegular, AppStyles.textWhite, AppStyles.textCenter, {}]}>By creating an account you agree to our Terms and Conditions</Text>
+                                            <Text style={[AppStyles.textRegular, AppStyles.textWhite, AppStyles.textCenter, {}]}>By creating an account, you agree to our Terms and Conditions</Text>
                                         </View>
                                         <ButtonColored
                                             text="CREATE ACCOUNT"

@@ -136,7 +136,7 @@ class EventDetail extends Component {
                         item.type === 'upcomming' ?
                             <View style={[AppStyles.rowCompContainer, {}]}>
                                 <ButtonColoredSmall
-                                    text="Register"
+                                    text="Register ONLY"
                                     textStyle={[AppStyles.textRegular, AppStyles.textWhite]}
                                     buttonStyle={[{ backgroundColor: Colors.appColor2 }]}
                                 />

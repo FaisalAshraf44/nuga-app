@@ -45,7 +45,7 @@ class EventItemCard extends Component {
                     showButtons ?
                         <View style={[AppStyles.rowCompContainer, {marginTop:0}]}>
                             <ButtonColoredSmall
-                                    text="Register"
+                                    text="Register ONLY"
                                     textStyle={[AppStyles.textRegular, AppStyles.textWhite]}
                                     buttonStyle={[{ backgroundColor: Colors.appColor2 }]}
                                 />
