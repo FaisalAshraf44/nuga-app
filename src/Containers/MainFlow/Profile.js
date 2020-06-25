@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
-import { AppStyles, Images, Colors } from '../../Themes';
+import { AppStyles, Images, Colors, FontFamily } from '../../Themes';
 import { UserImage, InputWithIcon, ButtonColored } from '../../Components';
 import { Icon, ButtonGroup } from 'react-native-elements';
 import { totalSize, height, width } from 'react-native-dimension';
@@ -34,6 +34,9 @@ class Profile extends Component {
                             </View>
                         </View>
                         <Text style={[AppStyles.h5, AppStyles.textGreen, { marginTop: height(2) }]}>John Doe</Text>
+                        <View style={[{ backgroundColor: Colors.appColor1, borderRadius: 100, paddingHorizontal: 15, paddingVertical: 10,marginTop:height(1) }]}>
+                                <Text style={[AppStyles.textMedium, AppStyles.textWhite, {}]}>Membership Fee: <Text style={[AppStyles.textWhite,{fontFamily:FontFamily.appTextBold}]}>Paid</Text></Text>
+                            </View>
                     </View>
                     <InputWithIcon
                         title="First Name"

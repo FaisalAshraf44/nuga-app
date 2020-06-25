@@ -91,7 +91,7 @@ class EventDetail extends Component {
     }
     TitleWithInfo = ({ title, info }) => {
         return (
-            <View style={[AppStyles.rowCompContainer,{marginTop:0,justifyContent:"flex-start"}]}>
+            <View style={[AppStyles.rowCompContainer, { marginTop: 0, justifyContent: "flex-start" }]}>
                 <Text style={[styles.title]}>{title}:</Text>
                 <Text style={[styles.info]}>{info}</Text>
             </View>
@@ -103,10 +103,20 @@ class EventDetail extends Component {
         return (
             <View style={AppStyles.mainContainer}>
                 <ScrollView>
-                    <Image
-                        source={item.image}
-                        style={{ height: height(30), width: null }}
-                    />
+                    <View>
+                        <Image
+                            source={item.image}
+                            style={{ height: height(30), width: null }}
+                        />
+                        {
+                            item.type === 'upcomming' ?
+                                <View style={[{ backgroundColor: Colors.appBgColor1, position: 'absolute', bottom: -height(2.5),left:width(5),  borderRadius: 50, paddingVertical: 10, paddingHorizontal: width(5) },AppStyles.shadow]}>
+                                    <Text style={[AppStyles.h4, AppStyles.textGreen2]}>{item.price} $</Text>
+                                </View>
+                                :
+                                null
+                        }
+                    </View>
                     <View style={[AppStyles.rowCompContainer, {}]}>
                         <View style={{ flex: 7.5 }}>
                             <Text style={[AppStyles.h5, AppStyles.textGreen2]}>{item.title}</Text>
@@ -137,12 +147,12 @@ class EventDetail extends Component {
                             <View style={[AppStyles.rowCompContainer, {}]}>
                                 <ButtonColoredSmall
                                     text="Register ONLY"
-                                    textStyle={[AppStyles.textRegular, AppStyles.textWhite]}
+                                    //textStyle={[AppStyles.textRegular, AppStyles.textWhite]}
                                     buttonStyle={[{ backgroundColor: Colors.appColor2 }]}
                                 />
                                 <ButtonColoredSmall
                                     text="Register & Pay"
-                                    textStyle={[AppStyles.textRegular, AppStyles.textWhite]}
+                                    //textStyle={[AppStyles.textRegular, AppStyles.textWhite]}
                                     buttonStyle={[{ backgroundColor: Colors.appColor2 }]}
                                 />
                                 <Text style={[AppStyles.textRegular, AppStyles.textGreen2]}>Withdraw</Text>
@@ -150,7 +160,7 @@ class EventDetail extends Component {
                             :
                             null
                     }
-                    <View style={[{ backgroundColor: Colors.appBgColor2 ,marginTop:height(2.5)}]}>
+                    <View style={[{ backgroundColor: Colors.appBgColor2, marginTop: height(2.5) }]}>
                         <this.DivisionItem
                             division='1'
                             first="Mar Wilson"
@@ -164,16 +174,16 @@ class EventDetail extends Component {
                             third="Max Lee"
                         />
                         <this.TitleWithInfo
-                        title='NTP'
-                        info="Max Lee"
+                            title='NTP'
+                            info="Max Lee"
                         />
                         <this.TitleWithInfo
-                        title='Longest Drive'
-                        info="John Wilson"
+                            title='Longest Drive'
+                            info="John Wilson"
                         />
                         <this.TitleWithInfo
-                        title='Lowest Grose'
-                        info="Jack Thomas"
+                            title='Lowest Grose'
+                            info="Jack Thomas"
                         />
                     </View>
 
@@ -183,7 +193,7 @@ class EventDetail extends Component {
                     <this.renderRegisteredMembers
                         data={registered_members}
                     />
-                    <View style={[AppStyles.compContainer, { marginBottom: 0,marginTop:height(5) }]}>
+                    <View style={[AppStyles.compContainer, { marginBottom: 0, marginTop: height(5) }]}>
                         <Text style={[styles.title]}>Pairings</Text>
                     </View>
                     <this.renderPairing

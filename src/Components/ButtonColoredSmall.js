@@ -28,7 +28,7 @@ class ButtonColoredSmall extends Component {
                             :
                             null
                     }
-                    <Text style={[AppStyles.buttonText, { color: Colors.appTextColor6 ,fontSize:FontSize.regular}, textStyle]}>{text}</Text>
+                    <Text style={[AppStyles.buttonText, AppStyles.textWhite,{ fontSize:FontSize.medium}, textStyle]}>{text}</Text>
                 </View>
             </TouchableOpacity>
         );

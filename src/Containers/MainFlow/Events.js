@@ -16,7 +16,8 @@ export default class Events extends Component {
                     location: 'Albany Golf club',
                     date: '22',
                     month: 'Jun',
-                    type:'upcomming'
+                    type:'upcomming',
+                    price:'45'
                 },
                 {
                     image: Images.auth_bg,
@@ -24,7 +25,8 @@ export default class Events extends Component {
                     location: 'Albany Golf club',
                     date: '22',
                     month: 'Jun',
-                    type:'upcomming'
+                    type:'upcomming',
+                    price:'70'
                 },
                 {
                     image: Images.auth_bg,
@@ -32,7 +34,8 @@ export default class Events extends Component {
                     location: 'Albany Golf club',
                     date: '22',
                     month: 'Jun',
-                    type:'upcomming'
+                    type:'upcomming',
+                    price:'59'
                 },
                 {
                     image: Images.auth_bg,
@@ -40,7 +43,8 @@ export default class Events extends Component {
                     location: 'Albany Golf club',
                     date: '22',
                     month: 'Jun',
-                    type:'upcomming'
+                    type:'upcomming',
+                    price:'45'
                 }
             ],
             past_events: [
@@ -95,6 +99,7 @@ export default class Events extends Component {
                                 title={item.title}
                                 location={item.location}
                                 date={item.date}
+                                price={item.price}
                                 month={item.month}
                                 showButtons={true}
                             />
