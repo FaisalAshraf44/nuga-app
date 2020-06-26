@@ -144,11 +144,11 @@ const CustomDrawerContent = (props) => {
             <View style={{ flex: 5, backgroundColor: Colors.appColor2 }}>
                 <ImageBackground source={Images.nuga_flag} resizeMode="contain" style={[AppStyles.bgContainer, {}]}>
                     <View style={[AppStyles.mainContainer, { backgroundColor: Colors.appBgColor4 + '40', justifyContent: 'space-between' }]}>
-                    <View style={[AppStyles.rowCompContainer]}>
+                    <View style={[AppStyles.compContainer,{alignItems:'flex-start'}]}>
                             <Icon name="close" size={totalSize(3)} color={Colors.appTextColor6} onPress={() => props.navigation.closeDrawer()} />
-                            <View style={[{ backgroundColor: Colors.appBgColor1, borderRadius: 100, paddingHorizontal: 10, paddingVertical: 7.5,alignSelf:'flex-start',marginTop:height(1) }]}>
+                            {/* <View style={[{ backgroundColor: Colors.appBgColor1, borderRadius: 100, paddingHorizontal: 10, paddingVertical: 7.5,alignSelf:'flex-start',marginTop:height(1) }]}>
                                 <Text style={[AppStyles.textSmall, AppStyles.textGray, {}]}>Membership Fee: <Text style={[AppStyles.textGreen,{fontFamily:FontFamily.appTextBold}]}>Paid</Text></Text>
-                            </View>
+                            </View> */}
                         </View>
                         <View style={[AppStyles.compContainer]}>
                             <TouchableOpacity
@@ -159,7 +159,12 @@ const CustomDrawerContent = (props) => {
                                     source={Images.user1}
                                 />
                             </TouchableOpacity>
-                            <Text style={[AppStyles.h6, AppStyles.textWhite, { fontSize: FontSize.h6 }]}>John Doe</Text>
+                           <View style={[AppStyles.rowView,{justifyContent:'space-between'}]}>
+                           <Text style={[AppStyles.h6, AppStyles.textWhite, { fontSize: FontSize.h6 }]}>John Doe</Text>
+                            <View style={[{ backgroundColor: Colors.appBgColor1, borderRadius: 100, paddingHorizontal: 10, paddingVertical: 7.5,alignSelf:'flex-start',marginTop:height(1) }]}>
+                                <Text style={[AppStyles.textTiny, AppStyles.textGray, {}]}>Membership Fee: <Text style={[AppStyles.textGreen,{fontFamily:FontFamily.appTextBold}]}>Paid</Text></Text>
+                            </View>
+                           </View>
                             
                             <View style={[AppStyles.rowView, { marginTop: height(2) }]}>
                                 <View style={[{ flex: 8, borderRadius: 100, backgroundColor: Colors.appBgColor1, justifyContent: 'space-between', padding: 2.5 }, AppStyles.rowView]}>
@@ -277,9 +282,9 @@ function Navigation() {
         }, 2000);
     }, [])
 
-      if (isLoading) {
-          return <Splash />
-      }
+       if (isLoading) {
+           return <Splash />
+       }
 
     return (
         <NavigationContainer>
