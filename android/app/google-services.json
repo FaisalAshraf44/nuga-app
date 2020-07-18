@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "593325834593",
+    "firebase_url": "https://nuga-1a565.firebaseio.com",
+    "project_id": "nuga-1a565",
+    "storage_bucket": "nuga-1a565.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:593325834593:android:aec4ceb336ae0c357d0520",
+        "android_client_info": {
+          "package_name": "com.nuga"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "593325834593-hgr6cjvb8kp4ng1d4p45kpaji0jh4h12.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB3CUUbrfvCXqVI72cGx5rtCwBAMnNUYIk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "593325834593-hgr6cjvb8kp4ng1d4p45kpaji0jh4h12.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
