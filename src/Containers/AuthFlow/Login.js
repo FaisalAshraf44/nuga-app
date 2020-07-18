@@ -14,6 +14,9 @@ import {Logo, InputWithIcon, ButtonColored} from '../../Components';
 import {totalSize, width, height} from 'react-native-dimension';
 import {ButtonGroup, Icon} from 'react-native-elements';
 import auth from '@react-native-firebase/auth';
+import {_storeData} from '../../Backend/AsyncFuncs';
+import {saveData, getData} from '../../Backend/utility';
+
 class Login extends Component {
   constructor(props) {
     super(props);
@@ -29,6 +32,7 @@ class Login extends Component {
       user: {},
       showSpinner: false,
       showWarning: false,
+      ErrorMessege: '',
       fname: '',
       lname: '',
       selected_screen_index: 0,
@@ -36,7 +40,7 @@ class Login extends Component {
       isResetPasswordModalVisible: false,
     };
   }
-  updateScreenIndex = selected_screen_index => {
+  updateScreenIndex = (selected_screen_index) => {
     this.setState({selected_screen_index});
   };
   toggleForgotPasswordModal = () =>
@@ -52,84 +56,213 @@ class Login extends Component {
     this.toggleResetPasswordModal();
   };
 
-  signIn = async () => {
-    if (this.state.email !== '' && this.state.password !== '') {
+  async checkSignupValidation() {
+    if (this.state.fname === '' || this.state.lname === '') {
       this.setState({
-        showSpinner: true,
-        showWarning: false,
-      });
-      await auth()
-        .signInWithEmailAndPassword(this.state.email, this.state.password)
-        .then(user => {
-          if (user) {
-            this.setState({
-              showSpinner: false,
-            });
-            this.setState({
-              email: '',
-              password: '',
-              email2: '',
-              password2: '',
-              fname: '',
-              lname: '',
-            });
-            this.props.navigation.navigate('App');
-            console.log('This is signedd in :: ', user);
-          }
-        })
-        .catch(e => {
-          this.setState({
-            showSpinner: false,
-            showWarning: true,
-          });
-          console.log('This is notttt signedd in :: ', e);
-        });
-    } else {
-      this.setState({
-        showSpinner: false,
+        ErrorMessege: 'The first name and last name cannot be empty',
         showWarning: true,
       });
+      return 1;
     }
+    //EmailCheck
+    let regex1 = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (regex1.test(this.state.email2) === false) {
+      // console.log("Email is Not Correct");
+      this.state.email2 !== undefined && this.state.email2 !== ''
+        ? this.setState({
+            ErrorMessege: 'The email is badly formatted',
+            showWarning: true,
+          })
+        : this.setState({
+            ErrorMessege: 'The email cannot be empty',
+            showWarning: true,
+          });
+      return 1;
+    }
+
+    let reg1 = /^[\w\d@$!%*#?&]{6,30}$/;
+    if (reg1.test(this.state.password2) === false) {
+      // console.log("UserName is Not Correct");
+      this.state.password2 === ''
+        ? this.setState({
+            ErrorMessege: 'The password cannot be empty',
+            showWarning: true,
+          })
+        : this.state.password2.length > 5
+        ? this.setState({
+            ErrorMessege: 'The password is badly formatted',
+            showWarning: true,
+          })
+        : this.setState({
+            ErrorMessege: 'The password should be atleast 6 characters long',
+            showWarning: true,
+          });
+      // this.setState({ email: text })
+      return 1;
+    }
+
+    return 0;
+  }
+
+  async signupValidationHelper() {
+    // alert('hello');
+    this.setState({showSpinner: true});
+    let TempCheck = await this.checkSignupValidation();
+
+    switch (TempCheck) {
+      case 0:
+        this.signUp();
+        break;
+      case 1:
+        this.setState({showSpinner: false});
+        // Toast.show(this.state.ErrorMessege);
+        break;
+      default:
+        break;
+    }
+  }
+
+  async checkValidation() {
+    //EmailCheck
+    let regex1 = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (regex1.test(this.state.email) === false) {
+      // console.log("Email is Not Correct");
+      this.state.email !== undefined && this.state.email !== ''
+        ? this.setState({
+            ErrorMessege: 'The email is badly formatted',
+            showWarning: true,
+          })
+        : this.setState({
+            ErrorMessege: 'The email cannot be empty',
+            showWarning: true,
+          });
+      return 1;
+    }
+    let reg1 = /^[\w\d@$!%*#?&]{6,30}$/;
+    if (reg1.test(this.state.password) === false) {
+      // console.log("UserName is Not Correct");
+      this.state.password === ''
+        ? this.setState({
+            ErrorMessege: 'The password cannot be empty',
+            showWarning: true,
+          })
+        : this.state.password.length > 5
+        ? this.setState({
+            ErrorMessege: 'The password is badly formatted',
+            showWarning: true,
+          })
+        : this.setState({
+            ErrorMessege: 'The password should be atleast 6 characters long',
+            showWarning: true,
+          });
+      // this.setState({ email: text })
+      return 1;
+    }
+    return 0;
+  }
+
+  async validationHelper() {
+    this.setState({showSpinner: true});
+    let TempCheck = await this.checkValidation();
+
+    switch (TempCheck) {
+      case 0:
+        this.signIn();
+        break;
+      case 1:
+        this.setState({showSpinner: false});
+        // Toast.show(this.state.ErrorMessege);
+        break;
+      default:
+        break;
+    }
+  }
+
+  signIn = async () => {
+    this.setState({
+      showSpinner: true,
+      showWarning: false,
+    });
+    await auth()
+      .signInWithEmailAndPassword(this.state.email, this.state.password)
+      .then(async (user) => {
+        await _storeData('Token', user.user.uid);
+        const userData = await getData('Users', user.user.uid);
+        await _storeData('userData', JSON.stringify(userData));
+        if (user) {
+          this.setState({
+            showSpinner: false,
+          });
+          this.setState({
+            email: '',
+            password: '',
+            email2: '',
+            password2: '',
+            fname: '',
+            lname: '',
+          });
+          this.props.navigation.navigate('App');
+          console.log('This is signedd in :: ', user);
+        }
+      })
+      .catch((e) => {
+        this.setState({
+          showSpinner: false,
+          showWarning: true,
+          ErrorMessege: 'Invalid email/password',
+        });
+        console.log('This is notttt signedd in :: ', e);
+      });
   };
 
   signUp = async () => {
-    if (this.state.email2 !== '' && this.state.password2 !== '') {
-      this.setState({
-        showSpinner: true,
-        showWarning: false,
-      });
-      await auth()
-        .createUserWithEmailAndPassword(this.state.email2, this.state.password2)
-        .then(user => {
-          if (user) {
-            this.setState({
-              showSpinner: false,
-            });
-            this.setState({
-              email: '',
-              password: '',
-              email2: '',
-              password2: '',
-              fname: '',
-              lname: '',
-            });
-            this.props.navigation.navigate('App');
-            console.log('This is signedd in :: ', user);
-          }
-        })
-        .catch(e => {
+    this.setState({
+      showSpinner: true,
+      showWarning: false,
+    });
+    await auth()
+      .createUserWithEmailAndPassword(this.state.email2, this.state.password2)
+      .then(async (user) => {
+        await _storeData('Token', user.user.uid);
+        await saveData('Users', user.user.uid, {
+          uuid: user.user.uid,
+          fname: this.state.fname,
+          lname: this.state.lname,
+          name: this.state.fname.trim() + ' ' + this.state.lname,
+          handicap: 0,
+          isActive: true,
+          phone: '',
+          email: this.state.email2,
+          profileImage: '',
+          paid: true,
+          timestampRegister: new Date(),
+        });
+        const userData = await getData('Users', user.user.uid);
+        await _storeData('userData', JSON.stringify(userData));
+        if (user) {
           this.setState({
             showSpinner: false,
-            showWarning: true,
           });
-          console.log('This is notttt signedd in :: ', e);
+          this.setState({
+            email: '',
+            password: '',
+            email2: '',
+            password2: '',
+            fname: '',
+            lname: '',
+          });
+          this.props.navigation.navigate('App');
+          console.log('This is signedd in :: ', user);
+        }
+      })
+      .catch((e) => {
+        this.setState({
+          showSpinner: false,
+          showWarning: true,
+          ErrorMessege: e.code,
         });
-    } else {
-      this.setState({
-        showSpinner: false,
-        showWarning: true,
+        console.log('This is notttt signedd in :: ', e);
       });
-    }
   };
   render() {
     const {
@@ -151,29 +284,14 @@ class Login extends Component {
                 <Logo size={totalSize(15)} />
               </View>
               {this.state.showSpinner ? (
-                // <View style={{position: 'absolute',
-                // marginTop: height(10),
-                // marginLeft: width(50),}}>
-                <ActivityIndicator
-                  size="large"
-                  color="#00ff00"
-                  // style={{
-                  //   position: 'absolute',
-                  //   marginTop: height(50),
-                  //   marginLeft: width(50),
-                  // //   marginBottom:0,
-                  // //   marginRight:0,
-                  // }}
-                />
-              ) : // </View>
-
-              null}
+                <ActivityIndicator size="large" color="#00ff00" />
+              ) : null}
               {this.state.showWarning ? (
                 <View style={{width: width(100), alignItems: 'center'}}>
                   <Text style={{color: 'red'}}>
                     {selected_screen_index === 0
-                      ? 'Invalid email/password'
-                      : 'Failed to register'}
+                      ? this.state.ErrorMessege
+                      : this.state.ErrorMessege}
                   </Text>
                 </View>
               ) : null}
@@ -200,8 +318,9 @@ class Login extends Component {
               {selected_screen_index === 0 ? (
                 <View>
                   <InputWithIcon
+                    keyboardType="email-address"
                     value={this.state.email}
-                    onChangeText={e => {
+                    onChangeText={(e) => {
                       console.log(e);
                       this.setState({
                         email: e,
@@ -216,7 +335,7 @@ class Login extends Component {
                     placeholder="Password"
                     secureTextEntry={true}
                     value={this.state.password}
-                    onChangeText={e => {
+                    onChangeText={(e) => {
                       this.setState({
                         password: e,
                         showWarning: false,
@@ -243,17 +362,24 @@ class Login extends Component {
                     text="LOGIN"
                     buttonStyle={{marginVertical: height(5)}}
                     onPress={() => {
-                      this.signIn();
+                      this.validationHelper();
                     }}
                   />
                 </View>
               ) : (
                 <View>
+                  {true == false ? (
+                    <InputWithIcon
+                      iconName="account-circle"
+                      keyboardType="default"
+                    />
+                  ) : null}
                   <InputWithIcon
                     iconName="account-circle"
                     placeholder="First Name"
+                    keyboardType="default"
                     value={this.state.fname}
-                    onChangeText={e => {
+                    onChangeText={(e) => {
                       this.setState({
                         fname: e,
                         showWarning: false,
@@ -264,7 +390,7 @@ class Login extends Component {
                     iconName="account-circle-outline"
                     placeholder="Last Name"
                     value={this.state.lname}
-                    onChangeText={e => {
+                    onChangeText={(e) => {
                       this.setState({
                         lname: e,
                         showWarning: false,
@@ -275,8 +401,9 @@ class Login extends Component {
                   <InputWithIcon
                     iconName="email"
                     placeholder="Email"
+                    keyboardType="email-address"
                     value={this.state.email2}
-                    onChangeText={e => {
+                    onChangeText={(e) => {
                       this.setState({
                         email2: e,
                         showWarning: false,
@@ -288,7 +415,7 @@ class Login extends Component {
                     iconName="lock"
                     placeholder="Password"
                     value={this.state.password2}
-                    onChangeText={e => {
+                    onChangeText={(e) => {
                       this.setState({
                         password2: e,
                         showWarning: false,
@@ -315,7 +442,7 @@ class Login extends Component {
 
                   <ButtonColored
                     onPress={() => {
-                      this.signUp();
+                      this.signupValidationHelper();
                     }}
                     text="CREATE ACCOUNT"
                     buttonStyle={{marginVertical: height(2.5)}}
