@@ -16,6 +16,9 @@ import {ButtonGroup, Icon} from 'react-native-elements';
 import auth from '@react-native-firebase/auth';
 import {_storeData} from '../../Backend/AsyncFuncs';
 import {saveData, getData} from '../../Backend/utility';
+import {RootConsumer} from '../../Backend/Context';
+
+let globalContext = null;
 
 class Login extends Component {
   constructor(props) {
@@ -40,7 +43,7 @@ class Login extends Component {
       isResetPasswordModalVisible: false,
     };
   }
-  updateScreenIndex = (selected_screen_index) => {
+  updateScreenIndex = selected_screen_index => {
     this.setState({selected_screen_index});
   };
   toggleForgotPasswordModal = () =>
@@ -185,9 +188,10 @@ class Login extends Component {
     });
     await auth()
       .signInWithEmailAndPassword(this.state.email, this.state.password)
-      .then(async (user) => {
+      .then(async user => {
         await _storeData('Token', user.user.uid);
         const userData = await getData('Users', user.user.uid);
+        globalContext.setUserData(userData);
         await _storeData('userData', JSON.stringify(userData));
         if (user) {
           this.setState({
@@ -205,7 +209,7 @@ class Login extends Component {
           console.log('This is signedd in :: ', user);
         }
       })
-      .catch((e) => {
+      .catch(e => {
         this.setState({
           showSpinner: false,
           showWarning: true,
@@ -222,7 +226,7 @@ class Login extends Component {
     });
     await auth()
       .createUserWithEmailAndPassword(this.state.email2, this.state.password2)
-      .then(async (user) => {
+      .then(async user => {
         await _storeData('Token', user.user.uid);
         await saveData('Users', user.user.uid, {
           uuid: user.user.uid,
@@ -238,6 +242,7 @@ class Login extends Component {
           timestampRegister: new Date(),
         });
         const userData = await getData('Users', user.user.uid);
+        globalContext.setUserData(userData);
         await _storeData('userData', JSON.stringify(userData));
         if (user) {
           this.setState({
@@ -255,7 +260,7 @@ class Login extends Component {
           console.log('This is signedd in :: ', user);
         }
       })
-      .catch((e) => {
+      .catch(e => {
         this.setState({
           showSpinner: false,
           showWarning: true,
@@ -273,323 +278,336 @@ class Login extends Component {
     const Screens = ['Login', 'Register'];
     const {navigate} = this.props.navigation;
     return (
-      <ImageBackground source={Images.auth_bg} style={AppStyles.bgContainer}>
-        <LinearGradient
-          colors={Colors.appGradiantColors1}
-          locations={[0.25, 1]}
-          style={{flex: 1}}>
-          <ScrollView>
-            <View style={{flex: 1}}>
-              <View style={[AppStyles.compContainer, AppStyles.center]}>
-                <Logo size={totalSize(15)} />
-              </View>
-              {this.state.showSpinner ? (
-                <ActivityIndicator size="large" color="#00ff00" />
-              ) : null}
-              {this.state.showWarning ? (
-                <View style={{width: width(100), alignItems: 'center'}}>
-                  <Text style={{color: 'red'}}>
-                    {selected_screen_index === 0
-                      ? this.state.ErrorMessege
-                      : this.state.ErrorMessege}
-                  </Text>
-                </View>
-              ) : null}
-              <ButtonGroup
-                selectedIndex={selected_screen_index}
-                containerStyle={{
-                  backgroundColor: 'transparent',
-                  borderWidth: 0,
-                  marginRight: width(30),
-                  marginLeft: width(5),
-                  marginVertical: height(2.5),
-                }}
-                buttons={Screens}
-                selectedButtonStyle={{
-                  backgroundColor: 'transparent',
-                  borderBottomWidth: 2.5,
-                  borderBottomColor: Colors.appColor1,
-                }}
-                innerBorderStyle={{width: 0}}
-                selectedTextStyle={[{color: Colors.appColor1}]}
-                textStyle={[AppStyles.h6, AppStyles.textLightGray]}
-                onPress={this.updateScreenIndex}
-              />
-              {selected_screen_index === 0 ? (
-                <View>
-                  <InputWithIcon
-                    keyboardType="email-address"
-                    value={this.state.email}
-                    onChangeText={(e) => {
-                      console.log(e);
-                      this.setState({
-                        email: e,
-                        showWarning: false,
-                      });
-                    }}
-                    iconName="email"
-                    placeholder="Email"
-                  />
-                  <InputWithIcon
-                    iconName="lock"
-                    placeholder="Password"
-                    secureTextEntry={true}
-                    value={this.state.password}
-                    onChangeText={(e) => {
-                      this.setState({
-                        password: e,
-                        showWarning: false,
-                      });
-                    }}
-                    containerStyle={{marginTop: height(2.5)}}
-                  />
-                  <View
-                    style={[
-                      AppStyles.compContainer,
-                      {marginVertical: height(1)},
-                    ]}>
-                    <Text
-                      onPress={this.toggleForgotPasswordModal}
-                      style={[
-                        AppStyles.textRegular,
-                        AppStyles.textGreen,
-                        {textAlign: 'right', textDecorationLine: 'underline'},
-                      ]}>
-                      Forgot Password
-                    </Text>
-                  </View>
-                  <ButtonColored
-                    text="LOGIN"
-                    buttonStyle={{marginVertical: height(5)}}
-                    onPress={() => {
-                      this.validationHelper();
-                    }}
-                  />
-                </View>
-              ) : (
-                <View>
-                  {true == false ? (
-                    <InputWithIcon
-                      iconName="account-circle"
-                      keyboardType="default"
+      <RootConsumer>
+        {context => {
+          globalContext = context;
+          // const userDat = context.userProfile;
+          return (
+            <ImageBackground
+              source={Images.auth_bg}
+              style={AppStyles.bgContainer}>
+              <LinearGradient
+                colors={Colors.appGradiantColors1}
+                locations={[0.25, 1]}
+                style={{flex: 1}}>
+                <ScrollView>
+                  <View style={{flex: 1}}>
+                    <View style={[AppStyles.compContainer, AppStyles.center]}>
+                      <Logo size={totalSize(15)} />
+                    </View>
+                    {this.state.showSpinner ? (
+                      <ActivityIndicator size="large" color="#00ff00" />
+                    ) : null}
+                    {this.state.showWarning ? (
+                      <View style={{width: width(100), alignItems: 'center'}}>
+                        <Text style={{color: 'red'}}>
+                          {selected_screen_index === 0
+                            ? this.state.ErrorMessege
+                            : this.state.ErrorMessege}
+                        </Text>
+                      </View>
+                    ) : null}
+                    <ButtonGroup
+                      selectedIndex={selected_screen_index}
+                      containerStyle={{
+                        backgroundColor: 'transparent',
+                        borderWidth: 0,
+                        marginRight: width(30),
+                        marginLeft: width(5),
+                        marginVertical: height(2.5),
+                      }}
+                      buttons={Screens}
+                      selectedButtonStyle={{
+                        backgroundColor: 'transparent',
+                        borderBottomWidth: 2.5,
+                        borderBottomColor: Colors.appColor1,
+                      }}
+                      innerBorderStyle={{width: 0}}
+                      selectedTextStyle={[{color: Colors.appColor1}]}
+                      textStyle={[AppStyles.h6, AppStyles.textLightGray]}
+                      onPress={this.updateScreenIndex}
                     />
-                  ) : null}
-                  <InputWithIcon
-                    iconName="account-circle"
-                    placeholder="First Name"
-                    keyboardType="default"
-                    value={this.state.fname}
-                    onChangeText={(e) => {
-                      this.setState({
-                        fname: e,
-                        showWarning: false,
-                      });
-                    }}
-                  />
-                  <InputWithIcon
-                    iconName="account-circle-outline"
-                    placeholder="Last Name"
-                    value={this.state.lname}
-                    onChangeText={(e) => {
-                      this.setState({
-                        lname: e,
-                        showWarning: false,
-                      });
-                    }}
-                    containerStyle={{marginTop: height(2)}}
-                  />
-                  <InputWithIcon
-                    iconName="email"
-                    placeholder="Email"
-                    keyboardType="email-address"
-                    value={this.state.email2}
-                    onChangeText={(e) => {
-                      this.setState({
-                        email2: e,
-                        showWarning: false,
-                      });
-                    }}
-                    containerStyle={{marginTop: height(2)}}
-                  />
-                  <InputWithIcon
-                    iconName="lock"
-                    placeholder="Password"
-                    value={this.state.password2}
-                    onChangeText={(e) => {
-                      this.setState({
-                        password2: e,
-                        showWarning: false,
-                      });
-                    }}
-                    containerStyle={{marginTop: height(2)}}
-                  />
+                    {selected_screen_index === 0 ? (
+                      <View>
+                        <InputWithIcon
+                          keyboardType="email-address"
+                          value={this.state.email}
+                          onChangeText={e => {
+                            console.log(e);
+                            this.setState({
+                              email: e,
+                              showWarning: false,
+                            });
+                          }}
+                          iconName="email"
+                          placeholder="Email"
+                        />
+                        <InputWithIcon
+                          iconName="lock"
+                          placeholder="Password"
+                          secureTextEntry={true}
+                          value={this.state.password}
+                          onChangeText={e => {
+                            this.setState({
+                              password: e,
+                              showWarning: false,
+                            });
+                          }}
+                          containerStyle={{marginTop: height(2.5)}}
+                        />
+                        <View
+                          style={[
+                            AppStyles.compContainer,
+                            {marginVertical: height(1)},
+                          ]}>
+                          <Text
+                            onPress={this.toggleForgotPasswordModal}
+                            style={[
+                              AppStyles.textRegular,
+                              AppStyles.textGreen,
+                              {
+                                textAlign: 'right',
+                                textDecorationLine: 'underline',
+                              },
+                            ]}>
+                            Forgot Password
+                          </Text>
+                        </View>
+                        <ButtonColored
+                          text="LOGIN"
+                          buttonStyle={{marginVertical: height(5)}}
+                          onPress={() => {
+                            this.validationHelper();
+                          }}
+                        />
+                      </View>
+                    ) : (
+                      <View>
+                        {true == false ? (
+                          <InputWithIcon
+                            iconName="account-circle"
+                            keyboardType="default"
+                          />
+                        ) : null}
+                        <InputWithIcon
+                          iconName="account-circle"
+                          placeholder="First Name"
+                          keyboardType="default"
+                          value={this.state.fname}
+                          onChangeText={e => {
+                            this.setState({
+                              fname: e,
+                              showWarning: false,
+                            });
+                          }}
+                        />
+                        <InputWithIcon
+                          iconName="account-circle-outline"
+                          placeholder="Last Name"
+                          value={this.state.lname}
+                          onChangeText={e => {
+                            this.setState({
+                              lname: e,
+                              showWarning: false,
+                            });
+                          }}
+                          containerStyle={{marginTop: height(2)}}
+                        />
+                        <InputWithIcon
+                          iconName="email"
+                          placeholder="Email"
+                          keyboardType="email-address"
+                          value={this.state.email2}
+                          onChangeText={e => {
+                            this.setState({
+                              email2: e,
+                              showWarning: false,
+                            });
+                          }}
+                          containerStyle={{marginTop: height(2)}}
+                        />
+                        <InputWithIcon
+                          iconName="lock"
+                          placeholder="Password"
+                          value={this.state.password2}
+                          onChangeText={e => {
+                            this.setState({
+                              password2: e,
+                              showWarning: false,
+                            });
+                          }}
+                          containerStyle={{marginTop: height(2)}}
+                        />
+                        <View
+                          style={[
+                            AppStyles.compContainer,
+                            {marginVertical: height(1.5)},
+                          ]}>
+                          <Text
+                            style={[
+                              AppStyles.textRegular,
+                              AppStyles.textWhite,
+                              AppStyles.textCenter,
+                              {},
+                            ]}>
+                            By creating an account, you agree to our Terms and
+                            Conditions
+                          </Text>
+                        </View>
+
+                        <ButtonColored
+                          onPress={() => {
+                            this.signupValidationHelper();
+                          }}
+                          text="CREATE ACCOUNT"
+                          buttonStyle={{marginVertical: height(2.5)}}
+                        />
+                      </View>
+                    )}
+                  </View>
+                </ScrollView>
+              </LinearGradient>
+              <Modal
+                visible={isForgotPasswordModalVisible}
+                transparent
+                animationType="slide">
+                <View style={{flex: 1}}>
+                  <View style={{flex: 2}} />
                   <View
                     style={[
-                      AppStyles.compContainer,
-                      {marginVertical: height(1.5)},
+                      {
+                        flex: 8,
+                        backgroundColor: Colors.appBgColor1,
+                        borderTopLeftRadius: 25,
+                        borderTopRightRadius: 25,
+                      },
+                      AppStyles.shadow,
                     ]}>
-                    <Text
-                      style={[
-                        AppStyles.textRegular,
-                        AppStyles.textWhite,
-                        AppStyles.textCenter,
-                        {},
-                      ]}>
-                      By creating an account, you agree to our Terms and
-                      Conditions
-                    </Text>
+                    <ScrollView>
+                      <View style={AppStyles.compContainer}>
+                        <Text
+                          style={[
+                            AppStyles.h4,
+                            AppStyles.textCenter,
+                            AppStyles.textGreen,
+                          ]}>
+                          Forgot Password
+                        </Text>
+                        <Text
+                          style={[
+                            AppStyles.textRegular,
+                            AppStyles.textCenter,
+                            AppStyles.textLightGray,
+                            {marginTop: height(2.5)},
+                          ]}>
+                          Enter email to reset your passcode
+                        </Text>
+                      </View>
+                      <InputWithIcon
+                        iconName="email"
+                        placeholder="Email"
+                        containerStyle={{marginVertical: height(2)}}
+                      />
+                      <ButtonColored
+                        text="DONE"
+                        buttonStyle={{marginVertical: height(2.5)}}
+                        onPress={() => this.onDoneForgotPassword()}
+                      />
+                      <View
+                        style={{
+                          position: 'absolute',
+                          top: totalSize(2),
+                          right: totalSize(2),
+                        }}>
+                        <Icon
+                          name="close"
+                          //reverse
+                          size={totalSize(3)}
+                          color={Colors.appColor1}
+                          onPress={this.toggleForgotPasswordModal}
+                        />
+                      </View>
+                    </ScrollView>
                   </View>
-
-                  <ButtonColored
-                    onPress={() => {
-                      this.signupValidationHelper();
-                    }}
-                    text="CREATE ACCOUNT"
-                    buttonStyle={{marginVertical: height(2.5)}}
-                  />
                 </View>
-              )}
-            </View>
-          </ScrollView>
-        </LinearGradient>
-        <Modal
-          visible={isForgotPasswordModalVisible}
-          transparent
-          animationType="slide">
-          <View style={{flex: 1}}>
-            <View style={{flex: 2}} />
-            <View
-              style={[
-                {
-                  flex: 8,
-                  backgroundColor: Colors.appBgColor1,
-                  borderTopLeftRadius: 25,
-                  borderTopRightRadius: 25,
-                },
-                AppStyles.shadow,
-              ]}>
-              <ScrollView>
-                <View style={AppStyles.compContainer}>
-                  <Text
+              </Modal>
+              <Modal
+                visible={isResetPasswordModalVisible}
+                transparent
+                animationType="slide">
+                <View style={{flex: 1}}>
+                  <View style={{flex: 2}} />
+                  <View
                     style={[
-                      AppStyles.h4,
-                      AppStyles.textCenter,
-                      AppStyles.textGreen,
+                      {
+                        flex: 8,
+                        backgroundColor: Colors.appBgColor1,
+                        borderTopLeftRadius: 25,
+                        borderTopRightRadius: 25,
+                      },
+                      AppStyles.shadow,
                     ]}>
-                    Forgot Password
-                  </Text>
-                  <Text
-                    style={[
-                      AppStyles.textRegular,
-                      AppStyles.textCenter,
-                      AppStyles.textLightGray,
-                      {marginTop: height(2.5)},
-                    ]}>
-                    Enter email to reset your passcode
-                  </Text>
+                    <ScrollView>
+                      <View style={AppStyles.compContainer}>
+                        <Text
+                          style={[
+                            AppStyles.h4,
+                            AppStyles.textCenter,
+                            AppStyles.textGreen,
+                          ]}>
+                          Reset Your Passcode
+                        </Text>
+                        <Text
+                          style={[
+                            AppStyles.textRegular,
+                            AppStyles.textCenter,
+                            AppStyles.textLightGray,
+                            {marginTop: height(2.5)},
+                          ]}>
+                          Please check your email and enter the reset code
+                        </Text>
+                      </View>
+                      <InputWithIcon
+                        iconName="lock"
+                        placeholder="Reset Code"
+                        containerStyle={{marginVertical: height(2)}}
+                      />
+                      <InputWithIcon
+                        iconName="lock"
+                        placeholder="New Password"
+                        containerStyle={{marginVertical: height(2)}}
+                      />
+                      <InputWithIcon
+                        iconName="lock"
+                        placeholder="Confirm Password"
+                        containerStyle={{marginVertical: height(2)}}
+                      />
+                      <ButtonColored
+                        text="Change Password"
+                        buttonStyle={{marginVertical: height(2.5)}}
+                      />
+                      <View
+                        style={{
+                          position: 'absolute',
+                          top: totalSize(2),
+                          right: totalSize(2),
+                        }}>
+                        <Icon
+                          name="close"
+                          //reverse
+                          size={totalSize(3)}
+                          color={Colors.appColor1}
+                          onPress={this.toggleResetPasswordModal}
+                        />
+                      </View>
+                    </ScrollView>
+                  </View>
                 </View>
-                <InputWithIcon
-                  iconName="email"
-                  placeholder="Email"
-                  containerStyle={{marginVertical: height(2)}}
-                />
-                <ButtonColored
-                  text="DONE"
-                  buttonStyle={{marginVertical: height(2.5)}}
-                  onPress={() => this.onDoneForgotPassword()}
-                />
-                <View
-                  style={{
-                    position: 'absolute',
-                    top: totalSize(2),
-                    right: totalSize(2),
-                  }}>
-                  <Icon
-                    name="close"
-                    //reverse
-                    size={totalSize(3)}
-                    color={Colors.appColor1}
-                    onPress={this.toggleForgotPasswordModal}
-                  />
-                </View>
-              </ScrollView>
-            </View>
-          </View>
-        </Modal>
-        <Modal
-          visible={isResetPasswordModalVisible}
-          transparent
-          animationType="slide">
-          <View style={{flex: 1}}>
-            <View style={{flex: 2}} />
-            <View
-              style={[
-                {
-                  flex: 8,
-                  backgroundColor: Colors.appBgColor1,
-                  borderTopLeftRadius: 25,
-                  borderTopRightRadius: 25,
-                },
-                AppStyles.shadow,
-              ]}>
-              <ScrollView>
-                <View style={AppStyles.compContainer}>
-                  <Text
-                    style={[
-                      AppStyles.h4,
-                      AppStyles.textCenter,
-                      AppStyles.textGreen,
-                    ]}>
-                    Reset Your Passcode
-                  </Text>
-                  <Text
-                    style={[
-                      AppStyles.textRegular,
-                      AppStyles.textCenter,
-                      AppStyles.textLightGray,
-                      {marginTop: height(2.5)},
-                    ]}>
-                    Please check your email and enter the reset code
-                  </Text>
-                </View>
-                <InputWithIcon
-                  iconName="lock"
-                  placeholder="Reset Code"
-                  containerStyle={{marginVertical: height(2)}}
-                />
-                <InputWithIcon
-                  iconName="lock"
-                  placeholder="New Password"
-                  containerStyle={{marginVertical: height(2)}}
-                />
-                <InputWithIcon
-                  iconName="lock"
-                  placeholder="Confirm Password"
-                  containerStyle={{marginVertical: height(2)}}
-                />
-                <ButtonColored
-                  text="Change Password"
-                  buttonStyle={{marginVertical: height(2.5)}}
-                />
-                <View
-                  style={{
-                    position: 'absolute',
-                    top: totalSize(2),
-                    right: totalSize(2),
-                  }}>
-                  <Icon
-                    name="close"
-                    //reverse
-                    size={totalSize(3)}
-                    color={Colors.appColor1}
-                    onPress={this.toggleResetPasswordModal}
-                  />
-                </View>
-              </ScrollView>
-            </View>
-          </View>
-        </Modal>
-      </ImageBackground>
+              </Modal>
+            </ImageBackground>
+          );
+        }}
+      </RootConsumer>
     );
   }
 }

@@ -11,40 +11,7 @@ class Home extends Component {
     super(props);
     this.state = {
       loading: false,
-      events: [
-        // {
-        //   image: Images.auth_bg,
-        //   title: 'Rush In',
-        //   location: 'Albany Golf club',
-        //   date: '22',
-        //   month: 'Jun',
-        //   type: 'past',
-        // },
-        // {
-        //   image: Images.auth_bg,
-        //   title: 'Go For Golf',
-        //   location: 'Albany Golf club',
-        //   date: '22',
-        //   month: 'Jun',
-        //   type: 'past',
-        // },
-        // {
-        //   image: Images.auth_bg,
-        //   title: 'Hero World Challenge',
-        //   location: 'Albany Golf club',
-        //   date: '22',
-        //   month: 'Jun',
-        //   type: 'past',
-        // },
-        // {
-        //   image: Images.auth_bg,
-        //   title: 'Golf Fever',
-        //   location: 'Albany Golf club',
-        //   date: '22',
-        //   month: 'Jun',
-        //   type: 'past',
-        // },
-      ],
+      events: [],
     };
   }
 
@@ -52,8 +19,6 @@ class Home extends Component {
     this.setState({loading: true});
     const events = await getAllOfCollection('Events');
     this.setState({loading: false, events});
-
-    console.log('Events:', events);
   }
 
   renderEvents = ({data, onPress}) => {

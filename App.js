@@ -1,6 +1,7 @@
 import React, {Component} from 'react';
 import {View, Text, SafeAreaView} from 'react-native';
 import Navigation from './src/Navigation/Navigation';
+import {RootContext} from './src/Backend/Context';
 
 class App extends Component {
   constructor(props) {
@@ -10,9 +11,11 @@ class App extends Component {
 
   render() {
     return (
-      <SafeAreaView style={{flex: 1}}>
-        <Navigation />
-      </SafeAreaView>
+      <RootContext>
+        <SafeAreaView style={{flex: 1}}>
+          <Navigation />
+        </SafeAreaView>
+      </RootContext>
     );
   }
 }
