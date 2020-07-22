@@ -1,17 +1,16 @@
-import React, { Component } from 'react';
-import { View, Text, SafeAreaView } from 'react-native';
+import React, {Component} from 'react';
+import {View, Text, SafeAreaView} from 'react-native';
 import Navigation from './src/Navigation/Navigation';
 
 class App extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-    };
+    this.state = {};
   }
 
   render() {
     return (
-      <SafeAreaView style={{ flex: 1 }}>
+      <SafeAreaView style={{flex: 1}}>
         <Navigation />
       </SafeAreaView>
     );
