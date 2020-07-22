@@ -4,41 +4,19 @@ const {Provider, Consumer} = React.createContext();
 // Note: You could also use hooks to provide state and convert this into a functional component.
 class RootContext extends Component {
   state = {
-    // authorization: '',
-    // discussion: [],
-    // posts: [],
-    inProgressReminder: '',
-    inProgressWork: '',
+    userData: {},
   };
-  // handleSetState = token => {
-  //   this.setState({authorization: token});
-  // };
-  // handleSetDiscussion = discussion => {
-  //   this.setState({discussion: discussion});
-  // };
-  // setPosts = posts => {
-  //   this.setState({posts: posts});
-  // };
-  setInProgressReminder = data => {
-    this.setState({inProgressReminder: data});
+
+  setUserData = data => {
+    this.setState({userData: data});
   };
-  setInProgressWork = data => {
-    this.setState({inProgressWork: data});
-  };
+
   render() {
     return (
       <Provider
         value={{
-          // token: this.state.authorization,
-          // handleSetState: this.handleSetState,
-          // discussion: this.state.discussion,
-          // handleSetDiscussion: this.handleSetDiscussion,
-          // posts: this.state.posts,
-          // setPosts: this.setPosts,
-          setInProgressReminder: this.setInProgressReminder,
-          inProgressReminder: this.state.inProgressReminder,
-          setInProgressWork: this.setInProgressWork,
-          inProgressWork: this.state.inProgressWork,
+          userData: this.state.userData,
+          setUserData: this.setUserData,
         }}>
         {this.props.children}
       </Provider>
