@@ -46,7 +46,7 @@ class Profile extends Component {
         handicap: '',
         isActive: '',
         membership: '',
-        gender: '',
+        gender: 1,
       },
       selectedGenderIndex: 1,
       imageB64String: '',
@@ -307,7 +307,7 @@ class Profile extends Component {
                           backgroundColor: Colors.appColor1,
                           borderRadius: 10,
                         }}
-                        selectedIndex={this.state.selectedGenderIndex}
+                        selectedIndex={user.gender}
                         onPress={this.updateGenderIndex}
                         textStyle={[
                           AppStyles.textRegular,

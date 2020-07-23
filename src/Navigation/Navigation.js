@@ -1,5 +1,12 @@
 import React, {Component} from 'react';
-import {View, Text, SafeAreaView, ImageBackground, Image} from 'react-native';
+import {
+  View,
+  Text,
+  SafeAreaView,
+  ImageBackground,
+  Image,
+  Alert,
+} from 'react-native';
 import {NavigationContainer} from '@react-navigation/native';
 import {createStackNavigator} from '@react-navigation/stack';
 import {
@@ -26,6 +33,7 @@ import {TouchableOpacity} from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-community/async-storage';
 import {getData} from '../Backend/utility';
 import {_storeData} from '../Backend/AsyncFuncs';
+import firebase from '@react-native-firebase/app';
 
 const Stack = createStackNavigator();
 const AuthStack = createStackNavigator();
@@ -298,7 +306,31 @@ const CustomDrawerContent = props => {
             <View style={{flex: 1}}>
               <DrawerItem
                 label="Logout"
-                onPress={() => props.navigation.navigate('Auth')}
+                onPress={() => {
+                  Alert.alert(
+                    'Logout',
+                    'Are you sure you want to logout?',
+                    [
+                      {
+                        text: 'Yes',
+                        onPress: async () => {
+                          await AsyncStorage.clear();
+                          await firebase.auth().signOut();
+                          globalContext && globalContext.setUserData({});
+
+                          props.navigation.navigate('Auth');
+                        },
+                      },
+                      {
+                        text: 'Cancel',
+                        onPress: () => console.log('Cancel Pressed'),
+                        style: 'cancel',
+                      },
+                      {text: 'OK', onPress: () => console.log('OK Pressed')},
+                    ],
+                    {cancelable: false},
+                  );
+                }}
                 icon={({focused, color, size}) => (
                   <Icon
                     color={color}
