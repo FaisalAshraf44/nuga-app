@@ -165,7 +165,11 @@ class Profile extends Component {
                     <View>
                       <UserImage
                         source={{
-                          uri: imageSource ? imageSource : user.profileImage,
+                          uri: imageSource
+                            ? imageSource
+                            : user.profileImage
+                            ? user.profileImage
+                            : 'https://lh3.googleusercontent.com/proxy/3cUh1csEsvh_CReTfD4rW8bBklAwVdBzLkw_r_sqG9sFUAyd2NcKrydmiRc3bp59YQZcDXcwIACEordDp78i_o1iogBLDV6-OirJFBiUEgyct3RkomwFc2YM9l7-7z3e4cJAvNoplYMstw',
                         }}
                         size={totalSize(15)}
                       />

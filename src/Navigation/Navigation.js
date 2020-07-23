@@ -204,7 +204,13 @@ const CustomDrawerContent = props => {
                         borderRadius: 100,
                         borderColor: Colors.appBgColor1,
                       }}>
-                      <UserImage source={{uri: user.profileImage}} />
+                      <UserImage
+                        source={{
+                          uri: user.profileImage
+                            ? user.profileImage
+                            : 'https://lh3.googleusercontent.com/proxy/3cUh1csEsvh_CReTfD4rW8bBklAwVdBzLkw_r_sqG9sFUAyd2NcKrydmiRc3bp59YQZcDXcwIACEordDp78i_o1iogBLDV6-OirJFBiUEgyct3RkomwFc2YM9l7-7z3e4cJAvNoplYMstw',
+                        }}
+                      />
                     </TouchableOpacity>
                     <View
                       style={[
@@ -318,7 +324,7 @@ const CustomDrawerContent = props => {
                           await firebase.auth().signOut();
                           globalContext && globalContext.setUserData({});
 
-                          props.navigation.navigate('Auth');
+                          props.navigation.navigate('login');
                         },
                       },
                       {
@@ -326,7 +332,6 @@ const CustomDrawerContent = props => {
                         onPress: () => console.log('Cancel Pressed'),
                         style: 'cancel',
                       },
-                      {text: 'OK', onPress: () => console.log('OK Pressed')},
                     ],
                     {cancelable: false},
                   );

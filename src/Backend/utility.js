@@ -393,3 +393,17 @@ export async function uploadImage_returnURL(
     },
   );
 }
+
+//********************************************//
+//--------------------------------------------//
+//-------------- Evetn Functions -------------//
+//--------------------------------------------//
+
+export const updateEventParticipants = async function(id, data) {
+  let db = firebase.firestore();
+  db.collection('Events')
+    .doc(id)
+    .update({
+      participants: data,
+    });
+};
