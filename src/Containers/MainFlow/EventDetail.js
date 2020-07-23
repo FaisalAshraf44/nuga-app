@@ -18,15 +18,23 @@ import {
   MemberItem,
   PairItemCard,
 } from '../../Components';
-import {getData, getAllOfCollection} from '../../Backend/utility';
+import {
+  getData,
+  getAllOfCollection,
+  updateEventParticipants,
+} from '../../Backend/utility';
 import {_retrieveData} from '../../Backend/AsyncFuncs';
+import firebase from '@react-native-firebase/app';
+
 import moment from 'moment';
+import Toast from 'react-native-simple-toast';
 
 class EventDetail extends Component {
   constructor(props) {
     super(props);
     this.state = {
       loading: false,
+      registerLoading: false,
       event: {},
 
       registered_members: [],
@@ -56,37 +64,104 @@ class EventDetail extends Component {
 
     this.userData = await _retrieveData('userData');
     this.userData = JSON.parse(this.userData);
-    console.log('userData:', this.userData);
 
-    const event = await getData('Events', this.props.route.params.id);
-    const users = await getAllOfCollection('Users');
+    await firebase
+      .firestore()
+      .collection('Events')
+      .doc(this.userData.uuid)
+      .onSnapshot(async doc => {
+        const event = await getData('Events', this.props.route.params.id);
+        const users = await getAllOfCollection('Users');
 
-    let registered_members = [];
+        let registered_members = [];
 
-    if (event.participants && event.participants.length) {
-      event.participants.forEach(participant => {
-        users.forEach(user => {
-          if (participant.userId == user.uuid) {
-            // let temp = Object.assign({}, user);
-            // temp.paid = participant.paid;
-            // temp.withdrawn = participant.withdrawn;
-            registered_members.push(user);
-          }
+        if (event.participants && event.participants.length) {
+          event.participants.forEach(participant => {
+            users.forEach(user => {
+              if (participant.userId == user.uuid) {
+                registered_members.push(user);
+              }
+            });
+          });
+        }
+
+        this.setState({
+          event,
+          registered_members: registered_members,
+          loading: false,
         });
       });
-    }
-
-    this.setState({
-      event,
-      registered_members: registered_members,
-      loading: false,
-    });
-    console.log('Event:', event);
-    console.log('registered_members:', registered_members);
   }
 
+  saveParticiapnts = newParticipant => {
+    this.setState({registerLoading: true});
+    let updatedParticipants = this.state.event.participants;
+    console.log('Participants:', updatedParticipants)
+      ? this.state.event.participants
+      : [];
+    let exists = false;
+    updatedParticipants.forEach(element => {
+      if (element.userId == newParticipant.userId) {
+        exists = true;
+      }
+    });
+
+    if (!exists) {
+      updatedParticipants.push(newParticipant);
+      updateEventParticipants(this.props.route.params.id, updatedParticipants)
+        .then(response => {
+          this.setState({
+            registerLoading: false,
+          });
+          Toast.show('Registered successfully');
+        })
+        .catch(err => {
+          this.setState({
+            registerLoading: false,
+          });
+          Toast.show(err);
+        });
+    } else {
+      Toast.show('You are already registered in this event');
+    }
+  };
+
+  withdrawParticiapnt = player => {
+    this.setState({withdrawLoading: true});
+    let updatedParticipants = this.state.event.participants;
+    console.log('Player:', player);
+    let exists = false;
+    updatedParticipants.forEach(element => {
+      if (element.userId == player.userId) {
+        exists = true;
+      }
+    });
+
+    if (exists) {
+      updatedParticipants.forEach(element => {
+        if (element.userId == player.userId) {
+          element.withdrawn = true;
+        }
+      });
+      updateEventParticipants(this.props.route.params.id, updatedParticipants)
+        .then(response => {
+          this.setState({
+            withdrawLoading: false,
+          });
+          Toast.show('Withdrawn successfully');
+        })
+        .catch(err => {
+          this.setState({
+            withdrawLoading: false,
+          });
+          Toast.show(err);
+        });
+    } else {
+      Toast.show('You are not registered in this event');
+    }
+  };
+
   renderRegisteredMembers = ({data}) => {
-    console.log('Data:', data);
     return (
       <FlatList
         data={data}
@@ -108,29 +183,25 @@ class EventDetail extends Component {
     );
   };
   renderPairing = ({data}) => {
-    console.log('Groups:', data);
-    return (
-      // <Text>hello groups</Text>
-      data && data.length ? (
-        <FlatList
-          data={data}
-          scrollEnabled={false}
-          renderItem={({item, index}) => {
-            return (
-              <PairItemCard
-                containerStyle={{
-                  marginTop: index === 0 ? height(1) : null,
-                  marginBottom: height(2.5),
-                }}
-                title={item.groupName}
-                time={moment(item.startTime).format('LT')}
-                members={item.players}
-              />
-            );
-          }}
-        />
-      ) : null
-    );
+    return data && data.length ? (
+      <FlatList
+        data={data}
+        scrollEnabled={false}
+        renderItem={({item, index}) => {
+          return (
+            <PairItemCard
+              containerStyle={{
+                marginTop: index === 0 ? height(1) : null,
+                marginBottom: height(2.5),
+              }}
+              title={item.groupName}
+              time={moment(item.startTime).format('LT')}
+              members={item.players}
+            />
+          );
+        }}
+      />
+    ) : null;
   };
   DivisionItem = ({division, first, second, third}) => {
     return (
@@ -169,9 +240,16 @@ class EventDetail extends Component {
     const {item} = this.props.route.params;
     const {registered_members, pairings, event} = this.state;
 
-    const found =
-      event.participant &&
-      event.participant.find(x => x.userId === this.userData.uuid);
+    // event.participant &&
+    //   event.participant.find(x => x.userId === this.userData.uuid);
+
+    let found = '';
+    event.participants &&
+      event.participants.forEach(element => {
+        if (element.userId == this.userData.uuid) {
+          found = element;
+        }
+      });
     console.log('Found:', found);
     return (
       <View style={AppStyles.mainContainer}>
@@ -266,7 +344,15 @@ class EventDetail extends Component {
               <View style={[AppStyles.rowCompContainer, {}]}>
                 <ButtonColoredSmall
                   text="Register ONLY"
+                  location={this.state.registerLoading}
                   //textStyle={[AppStyles.textRegular, AppStyles.textWhite]}
+                  onPress={() => {
+                    let newParticipant = {};
+                    newParticipant.userId = this.userData.uuid;
+                    newParticipant.paid = false;
+                    newParticipant.withdrawn = false;
+                    this.saveParticiapnts(newParticipant);
+                  }}
                   buttonStyle={[{backgroundColor: Colors.appColor2}]}
                 />
                 <ButtonColoredSmall
@@ -274,7 +360,9 @@ class EventDetail extends Component {
                   //textStyle={[AppStyles.textRegular, AppStyles.textWhite]}
                   buttonStyle={[{backgroundColor: Colors.appColor2}]}
                 />
-                <Text style={[AppStyles.textRegular, AppStyles.textGreen2]}>
+                <Text
+                  style={[AppStyles.textRegular, AppStyles.textGreen2]}
+                  onPress={() => this.withdrawParticiapnt(found)}>
                   Withdraw
                 </Text>
               </View>

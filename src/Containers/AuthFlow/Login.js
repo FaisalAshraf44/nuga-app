@@ -17,6 +17,7 @@ import auth from '@react-native-firebase/auth';
 import {_storeData} from '../../Backend/AsyncFuncs';
 import {saveData, getData} from '../../Backend/utility';
 import {RootConsumer} from '../../Backend/Context';
+import Toast from 'react-native-simple-toast';
 
 let globalContext = null;
 
@@ -32,7 +33,9 @@ class Login extends Component {
       // pan: new Animated.ValueXY({x: 0, y: hp(95)}),
       forgotPassword: false,
       initializing: true,
+      forgotPasswordEmail: '',
       user: {},
+      loading: false,
       showSpinner: false,
       showWarning: false,
       ErrorMessege: '',
@@ -54,9 +57,24 @@ class Login extends Component {
     this.setState({
       isResetPasswordModalVisible: !this.state.isResetPasswordModalVisible,
     });
+
   onDoneForgotPassword = async () => {
-    await this.toggleForgotPasswordModal();
-    this.toggleResetPasswordModal();
+    this.setState({loading: true});
+    await auth()
+      .sendPasswordResetEmail(this.state.forgotPasswordEmail)
+      .then(async a => {
+        Toast.show('Password reset email sent');
+        this.setState({loading: false});
+
+        this.toggleForgotPasswordModal();
+      })
+      .catch(e => {
+        this.setState({loading: false});
+
+        console.log('This is error of email :: ', e);
+      });
+
+    // this.toggleResetPasswordModal();
   };
 
   async checkSignupValidation() {
@@ -233,12 +251,13 @@ class Login extends Component {
           fname: this.state.fname,
           lname: this.state.lname,
           name: this.state.fname.trim() + ' ' + this.state.lname,
-          handicap: 0,
+          handicap: '0',
           isActive: true,
           phone: '',
           email: this.state.email2,
+          gender: 1,
+          membership: 'Unknown',
           profileImage: '',
-          paid: true,
           timestampRegister: new Date(),
         });
         const userData = await getData('Users', user.user.uid);
@@ -256,6 +275,7 @@ class Login extends Component {
             fname: '',
             lname: '',
           });
+          Toast.show('Account created succesfully');
           this.props.navigation.navigate('App');
           console.log('This is signedd in :: ', user);
         }
@@ -506,9 +526,14 @@ class Login extends Component {
                       <InputWithIcon
                         iconName="email"
                         placeholder="Email"
+                        value={this.state.forgotPasswordEmail}
+                        onChangeText={text =>
+                          this.setState({forgotPasswordEmail: text})
+                        }
                         containerStyle={{marginVertical: height(2)}}
                       />
                       <ButtonColored
+                        loading={this.state.loading}
                         text="DONE"
                         buttonStyle={{marginVertical: height(2.5)}}
                         onPress={() => this.onDoneForgotPassword()}
