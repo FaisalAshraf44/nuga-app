@@ -25,6 +25,7 @@ import {
   Events,
   Profile,
   EventDetail,
+  ChangePassword,
 } from '../Containers/MainFlow';
 import {DrawerIcon, UserImage} from '../Components';
 import {width, height, totalSize} from 'react-native-dimension';
@@ -101,6 +102,7 @@ const TermsCondStackScreens = () => {
     </TermsCondStack.Navigator>
   );
 };
+
 const AboutUsStackScreens = () => {
   return (
     <AboutUsStack.Navigator
@@ -158,6 +160,27 @@ const ProfileStackScreens = () => {
     </ProfileStack.Navigator>
   );
 };
+
+const ChangePasswordStackScreens = () => {
+  return (
+    <TermsCondStack.Navigator
+      screenOptions={({navigation, route}) => ({
+        title: 'Change Password',
+        headerTitleAlign: 'center',
+        headerTitleStyle: AppStyles.headerTitleStyle,
+        headerStyle: AppStyles.headerStyle,
+        headerLeft: () => (
+          <DrawerIcon
+            onPress={() => navigation.toggleDrawer()}
+            style={{marginLeft: width(5)}}
+          />
+        ),
+      })}>
+      <TermsCondStack.Screen name="changePass" component={ChangePassword} />
+    </TermsCondStack.Navigator>
+  );
+};
+
 const CustomDrawerContent = props => {
   return (
     <RootConsumer>
@@ -304,7 +327,7 @@ const CustomDrawerContent = props => {
                     <Image source={Images.nuga_flag} resizeMode="contain" style={{ height: totalSize(25), width: totalSize(25) }} />
                 </View> */}
             </View>
-            <View style={{flex: 4}}>
+            <View style={{flex: 5.5}}>
               <DrawerContentScrollView {...props}>
                 <DrawerItemList {...props} />
               </DrawerContentScrollView>
@@ -435,6 +458,21 @@ const DrawerScreens = () => {
                 drawerIcon: ({color, size}) => (
                   <Icon
                     name="account-outline"
+                    type="material-community"
+                    color={color}
+                    size={size}
+                  />
+                ),
+              }}
+            />
+            <Drawer.Screen
+              name="ChangePass"
+              component={ChangePasswordStackScreens}
+              options={{
+                title: 'Change Password',
+                drawerIcon: ({color, size}) => (
+                  <Icon
+                    name="account-key-outline"
                     type="material-community"
                     color={color}
                     size={size}
