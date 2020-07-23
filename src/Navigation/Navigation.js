@@ -455,20 +455,6 @@ function Navigation() {
         setIsLoading(!isLoading);
       }, 2000);
     }
-
-    // setTimeout(async () => {
-    //   const Token = await AsyncStorage.getItem('Token');
-    //   if (Token) {
-    //     const userData = await getData('Users', Token);
-    //     globalContext && globalContext.setUserData(userData);
-    //     await _storeData('userData', JSON.stringify(userData));
-    //     setLoggedIn(true);
-    //     setIsLoading(!isLoading);
-    //   } else {
-    //     setLoggedIn(false);
-    //     setIsLoading(!isLoading);
-    //   }
-    // }, 400);
   };
 
   if (isLoading) {
