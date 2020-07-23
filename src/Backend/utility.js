@@ -179,6 +179,14 @@ export async function saveDataWithoutDocId(collection, jsonObject) {
   return docRef;
 }
 
+export async function updateField(collection, doc, obj) {
+  return firebase
+    .firestore()
+    .collection(collection)
+    .doc(doc)
+    .update(obj);
+}
+
 export async function addToArray(collection, doc, array, value) {
   let docRef = await firebase
     .firestore()
@@ -307,3 +315,81 @@ export async function deleteDocument(collection, doc, field) {
 }
 
 export default firebase;
+
+export async function uploadImage_returnURL(
+  imgUri,
+  mime = 'image/jpeg',
+  imagePath,
+  name,
+  callBack,
+) {
+  console.log('in upload image......................');
+  //blob
+  const Blob = RNFetchBlob.polyfill.Blob;
+  const fs = RNFetchBlob.fs;
+
+  //keep reference to original value
+  const originalXMLHttpRequest = window.XMLHttpRequest;
+  window.XMLHttpRequest = RNFetchBlob.polyfill.XMLHttpRequest;
+  window.Blob = Blob;
+
+  const uploadUri =
+    Platform.OS === 'ios' ? imgUri.replace('file://', '') : imgUri;
+  const imageRef = firebase.storage().ref(imagePath);
+
+  let readingFile = await fs.readFile(uploadUri, 'base64');
+  let blob = await Blob.build(readingFile, {type: `${mime};BASE64`});
+
+  let uploadTask = imageRef.put(blob, {contentType: mime, name: name});
+
+  let progress = 0;
+  //Listen for state changes, errors, and completion of the upload.
+  uploadTask.on(
+    firebase.storage.TaskEvent.STATE_CHANGED,
+    function(snapshot) {
+      console.log('Bytes transferred ' + snapshot.bytesTransferred);
+      console.log('Total bytes ' + snapshot.totalBytes);
+      // var progress = ( (snapshot.bytesTransferred / snapshot.totalBytes) * 100 );
+      if (progress < 30) {
+        progress += 10;
+      } else if (progress >= 30) {
+        progress += 5;
+      } else if (progress >= 85) {
+        progress += 1;
+      } else if (progress >= 95) {
+        progress += 0.1;
+      }
+
+      _storeData(
+        GlobalConst.STORAGE_KEYS.imageUploadProgress,
+        progress.toString(),
+      );
+      switch (snapshot.state) {
+        case firebase.storage.TaskState.PAUSED:
+          console.log('Upload is paused');
+          break;
+        case firebase.storage.TaskState.RUNNING:
+          console.log('Upload is running');
+          break;
+      }
+    },
+    function(error) {
+      console.log(error);
+      _storeData(GlobalConst.STORAGE_KEYS.imageUploadProgress, '-1').then(
+        () => {
+          return 0;
+        },
+      );
+    },
+
+    async function() {
+      window.XMLHttpRequest = originalXMLHttpRequest;
+
+      // Upload completed successfully, now we can get the download URL
+      uploadTask.snapshot.ref.getDownloadURL().then(function(downloadURL) {
+        console.log('File available at', downloadURL);
+        callBack(downloadURL);
+      });
+    },
+  );
+}

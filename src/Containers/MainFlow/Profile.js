@@ -5,21 +5,34 @@ import {
   StyleSheet,
   ScrollView,
   ActivityIndicator,
+  TouchableOpacity,
 } from 'react-native';
 import {AppStyles, Images, Colors, FontFamily} from '../../Themes';
 import {UserImage, InputWithIcon, ButtonColored} from '../../Components';
 import {Icon, ButtonGroup} from 'react-native-elements';
 import {totalSize, height, width} from 'react-native-dimension';
-import {getData, saveDataWithDocId} from '../../Backend/utility';
+import {
+  getData,
+  saveDataWithDocId,
+  updateField,
+  uploadImage_returnURL,
+} from '../../Backend/utility';
 import {color} from 'react-native-reanimated';
 import {_retrieveData, _storeData} from '../../Backend/AsyncFuncs';
 import firebase from '@react-native-firebase/app';
+import Toast from 'react-native-simple-toast';
+import {image_picker} from '../../Backend/imageHandler';
+import {utils} from '@react-native-firebase/app';
+import storage from '@react-native-firebase/storage';
+
+const FireBaseStorage = storage();
 
 class Profile extends Component {
   constructor(props) {
     super(props);
     this.state = {
       loading: false,
+      buttonLoading: false,
       user: {
         fname: '',
         lname: '',
@@ -33,6 +46,11 @@ class Profile extends Component {
         gender: '',
       },
       selectedGenderIndex: 1,
+      imageB64String: '',
+      imageName: '',
+      imageUrl: '',
+      imageType: '',
+      imageSource: '',
     };
   }
   updateGenderIndex = selectedGenderIndex => {
@@ -56,20 +74,70 @@ class Profile extends Component {
       });
   }
 
+  onAddImage = imageData => {
+    this.setState({
+      imageB64String: imageData.data,
+      imageName: imageData.fileName,
+      imageUrl: Platform.OS === 'ios' ? imageData.uri : imageData.path,
+      imageType: imageData.type,
+      imageSource: imageData.uri,
+    });
+  };
+
   updateProfile = async () => {
+    this.setState({buttonLoading: true});
     const updated = await saveDataWithDocId(
       'Users',
       this.userData.uuid,
       this.state.user,
     );
-    if (updated) {
-      alert('updated');
+
+    if (updated && this.state.imageSource) {
+      const reference = FireBaseStorage.ref(`Users/${this.state.imageName}`);
+
+      const pathToFile = this.state.imageUrl;
+
+      const task = await reference.putFile(pathToFile);
+
+      if (task.state == 'success') {
+        const url = await storage()
+          .ref(`Users/${this.state.imageName}`)
+          .getDownloadURL();
+        this.state.user.profileImage = url;
+        const updated = await saveDataWithDocId(
+          'Users',
+          this.userData.uuid,
+          this.state.user,
+        );
+        if (updated) {
+          Toast.show('Profile updated succesfully');
+          this.setState({buttonLoading: false, imageSource: ''});
+        } else {
+          this.setState({buttonLoading: false});
+        }
+      }
+    } else {
+      Toast.show('Profile updated succesfully');
+      this.setState({buttonLoading: false});
+    }
+  };
+
+  storeImage = async downloadURL => {
+    const uid = await AsyncStorage.getItem('uid');
+    const response = updateField('Users', this.userData.uuid, {
+      profileImage: downloadURL,
+    });
+    if (response) {
+      this.setState({buttonLoading: false, imageSource: ''});
+      Toast.show('Profile updated succesfully');
+    } else {
+      this.setState({buttonLoading: false});
     }
   };
 
   render() {
     const Genders = ['Female', 'Male'];
-    const {user, loading} = this.state;
+    const {user, loading, buttonLoading, imageSource} = this.state;
     return (
       <View style={AppStyles.mainContainer}>
         {this.state.loading ? (
@@ -81,10 +149,12 @@ class Profile extends Component {
             <View style={[AppStyles.compContainer, {alignItems: 'center'}]}>
               <View>
                 <UserImage
-                  source={{uri: user.profileImage}}
+                  source={{uri: imageSource ? imageSource : user.profileImage}}
                   size={totalSize(15)}
                 />
-                <View style={{position: 'absolute', top: -2.5, right: -2.5}}>
+                <TouchableOpacity
+                  style={{position: 'absolute', top: -2.5, right: -2.5}}
+                  onPress={() => image_picker(this.onAddImage)}>
                   <View
                     style={[
                       {
@@ -104,7 +174,7 @@ class Profile extends Component {
                       color={Colors.appColor1}
                     />
                   </View>
-                </View>
+                </TouchableOpacity>
               </View>
               <Text
                 style={[
@@ -263,6 +333,7 @@ class Profile extends Component {
               containerStyle={styles.inputContainerStyle}
             /> */}
             <ButtonColored
+              loading={buttonLoading}
               onPress={this.updateProfile}
               text="Update Profile"
               buttonStyle={{marginVertical: height(5)}}
