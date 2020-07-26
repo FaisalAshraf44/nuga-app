@@ -4,8 +4,15 @@ import {AppStyles, Images, Colors, FontSize} from '../../Themes';
 import {EventItemCard} from '../../Components';
 import {height, width, totalSize} from 'react-native-dimension';
 import {ButtonGroup} from 'react-native-elements';
-import {saveData, getAllOfCollection} from '../../Backend/utility';
+import {
+  saveData,
+  getAllOfCollection,
+  updateEventParticipants,
+} from '../../Backend/utility';
 import moment from 'moment';
+import {_retrieveData} from '../../Backend/AsyncFuncs';
+import Toast from 'react-native-simple-toast';
+import firebase from '@react-native-firebase/app';
 
 export default class Events extends Component {
   constructor(props) {
@@ -14,101 +21,79 @@ export default class Events extends Component {
       selectedEventsIndex: 0,
       events: [],
       loading: false,
-      upcomming_events: [
-        // {
-        //   image: Images.auth_bg,
-        //   title: 'Hero World Challenge',
-        //   location: 'Albany Golf club',
-        //   date: '22',
-        //   month: 'Jun',
-        //   type: 'upcomming',
-        //   price: '45',
-        // },
-        // {
-        //   image: Images.auth_bg,
-        //   title: 'Golf Fever',
-        //   location: 'Albany Golf club',
-        //   date: '22',
-        //   month: 'Jun',
-        //   type: 'upcomming',
-        //   price: '70',
-        // },
-        // {
-        //   image: Images.auth_bg,
-        //   title: 'Rush In',
-        //   location: 'Albany Golf club',
-        //   date: '22',
-        //   month: 'Jun',
-        //   type: 'upcomming',
-        //   price: '59',
-        // },
-        // {
-        //   image: Images.auth_bg,
-        //   title: 'Go For Golf',
-        //   location: 'Albany Golf club',
-        //   date: '22',
-        //   month: 'Jun',
-        //   type: 'upcomming',
-        //   price: '45',
-        // },
-      ],
-      past_events: [
-        // {
-        //   image: Images.auth_bg,
-        //   title: 'Rush In',
-        //   location: 'Albany Golf club',
-        //   date: '22',
-        //   month: 'Jun',
-        //   type: 'past',
-        // },
-        // {
-        //   image: Images.auth_bg,
-        //   title: 'Go For Golf',
-        //   location: 'Albany Golf club',
-        //   date: '22',
-        //   month: 'Jun',
-        //   type: 'past',
-        // },
-        // {
-        //   image: Images.auth_bg,
-        //   title: 'Hero World Challenge',
-        //   location: 'Albany Golf club',
-        //   date: '22',
-        //   month: 'Jun',
-        //   type: 'past',
-        // },
-        // {
-        //   image: Images.auth_bg,
-        //   title: 'Golf Fever',
-        //   location: 'Albany Golf club',
-        //   date: '22',
-        //   month: 'Jun',
-        //   type: 'past',
-        // },
-      ],
+      upcomming_events: [],
+      past_events: [],
+      registerLoading: false,
     };
   }
 
   async componentDidMount() {
     this.setState({loading: true});
-    const events = await getAllOfCollection('Events');
+    this.userData = await _retrieveData('userData');
+    this.userData = JSON.parse(this.userData);
+    await firebase
+      .firestore()
+      .collection('Events')
+      .onSnapshot(async doc => {
+        const events = await getAllOfCollection('Events');
 
-    const upcomming_events = events.filter(element => {
-      let date = moment(new Date(element.date.seconds * 1000));
-      let curentDate = new Date();
-      return date.diff(curentDate, 'days') > 0 && element.status == true;
-    });
+        const upcomming_events = events.filter(element => {
+          let date = moment(new Date(element.date.seconds * 1000));
+          let curentDate = new Date();
+          return date.diff(curentDate, 'days') > 0 && element.status == true;
+        });
 
-    const past_events = events.filter(element => {
-      let date = moment(new Date(element.date.seconds * 1000));
-      let curentDate = new Date();
-      return date.diff(curentDate) < 0 || !element.status;
-    });
+        const past_events = events.filter(element => {
+          let date = moment(new Date(element.date.seconds * 1000));
+          let curentDate = new Date();
+          return date.diff(curentDate) < 0 || !element.status;
+        });
 
-    this.setState({loading: false, events, upcomming_events, past_events});
-
+        this.setState({loading: false, events, upcomming_events, past_events});
+      });
     console.log('Events:', events);
   }
+
+  registerParticiapnts = (event, newParticipant) => {
+    this.setState({registerLoading: true});
+    let updatedParticipants = event.participants;
+    console.log('Participants:', updatedParticipants) ? event.participants : [];
+    let exists = false;
+    let withdrawn = false;
+    updatedParticipants.forEach(element => {
+      if (element.userId == newParticipant.userId) {
+        if (element.withdrawn == true) {
+          element.withdrawn = false;
+          exists = false;
+          withdrawn = true;
+        } else {
+          exists = true;
+        }
+      }
+    });
+
+    if (!withdrawn) {
+      updatedParticipants.push(newParticipant);
+    }
+
+    if (!exists) {
+      updateEventParticipants(event.uuid, updatedParticipants)
+        .then(response => {
+          this.setState({
+            registerLoading: false,
+          });
+          Toast.show('Registered successfully');
+        })
+        .catch(err => {
+          this.setState({
+            registerLoading: false,
+          });
+          Toast.show(err);
+        });
+    } else {
+      Toast.show('You are already registered in this event');
+    }
+  };
 
   updateEventButton = selectedEventsIndex =>
     this.setState({selectedEventsIndex});
@@ -128,11 +113,24 @@ export default class Events extends Component {
                 image={item.image}
                 title={item.name}
                 location={item.location}
-                date={moment(item.date).format('D')}
-                price={item.fee}
-                guestPrice={item.guestfee}
-                month={moment(item.date).format('MMM, YYYY')}
+                date={moment(new Date(item.date.seconds * 1000)).format('D')}
+                price={
+                  this.userData && this.userData.membership == 'Paid'
+                    ? item.fee
+                    : item.guestfee
+                }
+                // guestPrice={item.guestfee}
+                month={moment(new Date(item.date.seconds * 1000)).format(
+                  'MMM, YYYY',
+                )}
                 showButtons={true}
+                registerOnPress={newParticipant =>
+                  this.registerParticiapnts(item, newParticipant)
+                }
+                registerLoading={this.state.registerLoading}
+                payOnPress={() =>
+                  Toast.show('This feature is not available yet')
+                }
               />
             );
           }}
@@ -156,8 +154,10 @@ export default class Events extends Component {
                 image={item.image}
                 title={item.name}
                 location={item.location}
-                date={moment(item.date).format('D')}
-                month={moment(item.date).format('MMM, YYYY')}
+                date={moment(new Date(item.date.seconds * 1000)).format('D')}
+                month={moment(new Date(item.date.seconds * 1000)).format(
+                  'MMM, YYYY',
+                )}
               />
             );
           }}

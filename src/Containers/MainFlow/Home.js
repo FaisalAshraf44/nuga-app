@@ -43,8 +43,10 @@ class Home extends Component {
                   image={item.image}
                   title={item.name}
                   location={item.location}
-                  date={moment(item.date).format('D')}
-                  month={moment(item.date).format('MMM, YYYY')}
+                  date={moment(new Date(item.date.seconds * 1000)).format('D')}
+                  month={moment(new Date(item.date.seconds * 1000)).format(
+                    'MMM, YYYY',
+                  )}
                 />
               );
             }}
