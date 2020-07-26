@@ -216,19 +216,52 @@ class EventDetail extends Component {
   DivisionItem = ({division, first, second, third}) => {
     return (
       <View style={[AppStyles.compContainer]}>
-        <Text style={[styles.title]}>{division}</Text>
+        <Text style={[styles.title]}>{division.divisionName}</Text>
         <View style={[styles.divisionSubContainer]}>
           <View style={[AppStyles.rowView]}>
             <Text style={[styles.title]}>1st:</Text>
-            <Text style={[styles.info]}>{first}</Text>
+            <View style={{marginLeft: 16}}>
+              <UserImage
+                style={styles.pictureBorder}
+                source={{
+                  uri: division.player1 && division.player1[0].profileImage,
+                }}
+                size={totalSize(5)}
+              />
+            </View>
+            <Text style={[styles.info]}>
+              {division.player1 && division.player1[0].name}
+            </Text>
           </View>
-          <View style={[AppStyles.rowView]}>
+          <View style={[AppStyles.rowView, {marginTop: 12}]}>
             <Text style={[styles.title]}>2nd:</Text>
-            <Text style={[styles.info]}>{second}</Text>
+            <View style={{marginLeft: 12}}>
+              <UserImage
+                style={styles.pictureBorder}
+                source={{
+                  uri: division.player1 && division.player2[0].profileImage,
+                }}
+                size={totalSize(5)}
+              />
+            </View>
+            <Text style={[styles.info]}>
+              {division.player1 && division.player2[0].name}
+            </Text>
           </View>
-          <View style={[AppStyles.rowView]}>
+          <View style={[AppStyles.rowView, {marginTop: 12}]}>
             <Text style={[styles.title]}>3rd:</Text>
-            <Text style={[styles.info]}>{third}</Text>
+            <View style={{marginLeft: 14}}>
+              <UserImage
+                style={styles.pictureBorder}
+                source={{
+                  uri: division.player1 && division.player3[0].profileImage,
+                }}
+                size={totalSize(5)}
+              />
+            </View>
+            <Text style={[styles.info]}>
+              {division.player1 && division.player3[0].name}
+            </Text>
           </View>
         </View>
       </View>
@@ -388,7 +421,7 @@ class EventDetail extends Component {
               {event.divisions && event.divisions.length > 0
                 ? event.divisions.map(division => (
                     <this.DivisionItem
-                      division={division.divisionName}
+                      division={division}
                       first={division.first}
                       second={division.second}
                       third={division.third}
@@ -453,4 +486,5 @@ const styles = StyleSheet.create({
     borderLeftColor: Colors.appColor2,
     paddingHorizontal: width(2.5),
   },
+  pictureBorder: {borderWidth: 2, borderColor: Colors.appColor2},
 });
