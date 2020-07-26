@@ -5,11 +5,17 @@ import {height, totalSize, width} from 'react-native-dimension';
 import {Icon} from 'react-native-elements';
 import {ButtonColored} from '.';
 import ButtonColoredSmall from './ButtonColoredSmall';
+import {_retrieveData} from '../Backend/AsyncFuncs';
 
 class EventItemCard extends Component {
   constructor(props) {
     super(props);
     this.state = {};
+  }
+
+  async componentDidMount() {
+    this.userData = await _retrieveData('userData');
+    this.userData = JSON.parse(this.userData);
   }
 
   render() {
@@ -23,6 +29,9 @@ class EventItemCard extends Component {
       price,
       showButtons,
       onPress,
+      registerOnPress,
+      registerLoading,
+      payOnPress,
     } = this.props;
     return (
       <TouchableOpacity
@@ -64,7 +73,7 @@ class EventItemCard extends Component {
                 },
               ]}>
               <Text style={[AppStyles.h5, AppStyles.textGreen2]}>
-                {price} $
+                {price} £
               </Text>
             </View>
           ) : null}
@@ -116,9 +125,18 @@ class EventItemCard extends Component {
               text="Register ONLY"
               //textStyle={[AppStyles.textRegular,]}
               buttonStyle={[{backgroundColor: Colors.appColor2}]}
+              location={registerLoading}
+              onPress={() => {
+                let newParticipant = {};
+                newParticipant.userId = this.userData.uuid;
+                newParticipant.paid = false;
+                newParticipant.withdrawn = false;
+                registerOnPress(newParticipant);
+              }}
             />
             <ButtonColoredSmall
               text="Register & Pay"
+              onPress={payOnPress}
               //textStyle={[AppStyles.textRegular, AppStyles.textWhite]}
               buttonStyle={[{backgroundColor: Colors.appColor2}]}
             />

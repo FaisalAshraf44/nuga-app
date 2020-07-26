@@ -38,23 +38,7 @@ class EventDetail extends Component {
       event: {},
 
       registered_members: [],
-      pairings: [
-        {
-          title: 'Group 1',
-          time: '10:00',
-          members: ['Jack Wilson', 'Max Lee'],
-        },
-        {
-          title: 'Group 2',
-          time: '12:00',
-          members: ['Jack Wilson', 'Max Lee'],
-        },
-        {
-          title: 'Group 3',
-          time: '03:00',
-          members: ['Jack Wilson', 'Max Lee'],
-        },
-      ],
+      pairings: [],
     };
   }
 
@@ -65,6 +49,11 @@ class EventDetail extends Component {
     this.userData = await _retrieveData('userData');
     this.userData = JSON.parse(this.userData);
 
+    this.loadAllData();
+  }
+
+  loadAllData = async () => {
+    console.log('Loading');
     await firebase
       .firestore()
       .collection('Events')
@@ -79,7 +68,9 @@ class EventDetail extends Component {
           event.participants.forEach(participant => {
             users.forEach(user => {
               if (participant.userId == user.uuid) {
-                registered_members.push(user);
+                if (participant.withdrawn == false) {
+                  registered_members.push(user);
+                }
               }
             });
           });
@@ -91,7 +82,7 @@ class EventDetail extends Component {
           loading: false,
         });
       });
-  }
+  };
 
   saveParticiapnts = newParticipant => {
     this.setState({registerLoading: true});
@@ -100,20 +91,38 @@ class EventDetail extends Component {
       ? this.state.event.participants
       : [];
     let exists = false;
+    let withdrawn = false;
     updatedParticipants.forEach(element => {
       if (element.userId == newParticipant.userId) {
-        exists = true;
+        if (element.withdrawn == true) {
+          element.withdrawn = false;
+          exists = false;
+          withdrawn = true;
+        } else {
+          exists = true;
+        }
       }
     });
 
-    if (!exists) {
+    if (!withdrawn) {
       updatedParticipants.push(newParticipant);
+    }
+
+    // updatedParticipants.forEach(element => {
+    //   if (element.userId == newParticipant.userId) {
+    //     exists = true;
+    //   }
+    // });
+
+    if (!exists) {
+      // updatedParticipants.push(newParticipant);
       updateEventParticipants(this.props.route.params.id, updatedParticipants)
         .then(response => {
           this.setState({
             registerLoading: false,
           });
           Toast.show('Registered successfully');
+          this.loadAllData();
         })
         .catch(err => {
           this.setState({
@@ -149,6 +158,7 @@ class EventDetail extends Component {
             withdrawLoading: false,
           });
           Toast.show('Withdrawn successfully');
+          this.loadAllData();
         })
         .catch(err => {
           this.setState({
@@ -317,10 +327,14 @@ class EventDetail extends Component {
                     AppStyles.center,
                   ]}>
                   <Text style={[AppStyles.h6, AppStyles.textWhite]}>
-                    {moment(event.date).format('D')}
+                    {moment(
+                      new Date(event.date && event.date.seconds * 1000),
+                    ).format('D')}
                   </Text>
                   <Text style={[AppStyles.textMedium, AppStyles.textWhite]}>
-                    {moment(event.date).format('MMM, YYYY')}
+                    {moment(
+                      new Date(event.date && event.date.seconds * 1000),
+                    ).format('MMM, YYYY')}
                   </Text>
                 </View>
               </View>
@@ -400,7 +414,7 @@ class EventDetail extends Component {
             </View>
 
             <View style={[AppStyles.compContainer, {}]}>
-              <Text style={[styles.title]}>Registered Members</Text>
+              <Text style={[styles.title]}>Registered Players</Text>
             </View>
             <this.renderRegisteredMembers data={registered_members} />
             {event.groups && event.groups.length ? (
