@@ -207,6 +207,7 @@ class EventDetail extends Component {
               title={item.groupName}
               time={moment(item.startTime).format('LT')}
               members={item.players}
+              GiveMargin={true}
             />
           );
         }}
