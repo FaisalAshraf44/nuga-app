@@ -1,5 +1,5 @@
 import React, {Component} from 'react';
-import {View, Text, TouchableOpacity, Image} from 'react-native';
+import {View, Text, TouchableOpacity, Image, FlatList} from 'react-native';
 import {AppStyles, Colors, Images} from '../Themes';
 import {height, totalSize, width} from 'react-native-dimension';
 import {Icon} from 'react-native-elements';
@@ -53,24 +53,21 @@ class PairItemCard extends Component {
               },
               AppStyles.rowView,
             ]}>
-            <ScrollView
-              horizontal
-              contentContainerStyle={{
-                flexDirection: 'row',
-                // width: width(60),
-              }}>
-              {members.map((item, key) => {
-                return (
-                  <>
-                    {GiveMargin ? <View style={{width: 8}} /> : null}
+            <FlatList
+              data={members}
+              numColumns={2}
+              style={{flex: 1}}
+              renderItem={({item, index}) => (
+                <>
+                  <View style={{width: width(25)}}>
                     <MemberItem
                       image={{uri: item.profileImage}}
                       name={item.name}
                     />
-                  </>
-                );
-              })}
-            </ScrollView>
+                  </View>
+                </>
+              )}
+            />
           </View>
         </View>
       </View>
