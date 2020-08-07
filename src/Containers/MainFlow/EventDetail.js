@@ -205,7 +205,9 @@ class EventDetail extends Component {
                 marginBottom: height(2.5),
               }}
               title={item.groupName}
-              time={moment(item.startTime).format('LT')}
+              time={moment(new Date(item.startTime.seconds * 1000)).format(
+                'LT',
+              )}
               members={item.players}
               GiveMargin={true}
             />
@@ -225,13 +227,13 @@ class EventDetail extends Component {
               <UserImage
                 style={styles.pictureBorder}
                 source={{
-                  uri: division.player1 && division.player1[0].profileImage,
+                  uri: division.player1 && division.player1.profileImage,
                 }}
                 size={totalSize(5)}
               />
             </View>
             <Text style={[styles.info]}>
-              {division.player1 && division.player1[0].name}
+              {division.player1 && division.player1.name}
             </Text>
           </View>
           <View style={[AppStyles.rowView, {marginTop: 12}]}>
@@ -240,13 +242,13 @@ class EventDetail extends Component {
               <UserImage
                 style={styles.pictureBorder}
                 source={{
-                  uri: division.player1 && division.player2[0].profileImage,
+                  uri: division.player1 && division.player2.profileImage,
                 }}
                 size={totalSize(5)}
               />
             </View>
             <Text style={[styles.info]}>
-              {division.player1 && division.player2[0].name}
+              {division.player1 && division.player2.name}
             </Text>
           </View>
           <View style={[AppStyles.rowView, {marginTop: 12}]}>
@@ -255,20 +257,20 @@ class EventDetail extends Component {
               <UserImage
                 style={styles.pictureBorder}
                 source={{
-                  uri: division.player1 && division.player3[0].profileImage,
+                  uri: division.player1 && division.player3.profileImage,
                 }}
                 size={totalSize(5)}
               />
             </View>
             <Text style={[styles.info]}>
-              {division.player1 && division.player3[0].name}
+              {division.player1 && division.player3.name}
             </Text>
           </View>
         </View>
       </View>
     );
   };
-  TitleWithInfo = ({title, info}) => {
+  TitleWithInfo = ({title, info, player}) => {
     return (
       <View
         style={[
@@ -276,6 +278,15 @@ class EventDetail extends Component {
           {marginTop: 0, justifyContent: 'flex-start'},
         ]}>
         <Text style={[styles.title]}>{title}:</Text>
+        <View style={{marginLeft: 14}}>
+          <UserImage
+            style={styles.pictureBorder}
+            source={{
+              uri: player && player.profileImage,
+            }}
+            size={totalSize(5)}
+          />
+        </View>
         <Text style={[styles.info]}>{info}</Text>
       </View>
     );
@@ -383,7 +394,7 @@ class EventDetail extends Component {
                       ? 'Registered & Paid'
                       : found && found.withdrawn
                       ? 'Withdrawn'
-                      : 'Registed'
+                      : 'Registered'
                     : 'Not Registered'}
                 </Text>
               </View>
@@ -436,14 +447,20 @@ class EventDetail extends Component {
                 second="Jack Thomas"
                 third="Max Lee"
               /> */}
-              <this.TitleWithInfo title="NTP" info={event.ntp} />
+              <this.TitleWithInfo
+                title="NTP"
+                info={event.ntp}
+                player={event.ntpPlayer}
+              />
               <this.TitleWithInfo
                 title="Longest Drive"
                 info={event.longestDrive}
+                player={event.longestDrivePlayer}
               />
               <this.TitleWithInfo
-                title="Lowest Grose"
+                title="Lowest Gross"
                 info={event.lowestGrose}
+                player={event.lowestGrosePlayer}
               />
             </View>
 
