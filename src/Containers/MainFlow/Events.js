@@ -98,6 +98,19 @@ export default class Events extends Component {
   updateEventButton = selectedEventsIndex =>
     this.setState({selectedEventsIndex});
   renderUpcommingEvents = ({data, onPress}) => {
+    data.sort((a, b) => {
+      var nameA = moment(new Date(a.date.seconds * 1000));
+      // var nameA = a.item_name.charAt(0).toUpperCase();
+      var nameB = moment(new Date(b.date.seconds * 1000));
+      if (nameA.diff(nameB, 'days') < 0) {
+        return -1;
+      }
+      if (nameA.diff(nameB, 'days') > 0) {
+        return 1;
+      }
+      // names must be equal
+      return 0;
+    });
     return (
       <View style={{flex: 1}}>
         <FlatList
@@ -139,6 +152,19 @@ export default class Events extends Component {
     );
   };
   renderPastEvents = ({data, onPress}) => {
+    data.sort((a, b) => {
+      var nameA = moment(new Date(a.date.seconds * 1000));
+      // var nameA = a.item_name.charAt(0).toUpperCase();
+      var nameB = moment(new Date(b.date.seconds * 1000));
+      if (nameA.diff(nameB, 'days') > 0) {
+        return -1;
+      }
+      if (nameA.diff(nameB, 'days') < 0) {
+        return 1;
+      }
+      // names must be equal
+      return 0;
+    });
     return (
       <View style={{flex: 1}}>
         <FlatList
