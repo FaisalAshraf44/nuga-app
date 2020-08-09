@@ -1,11 +1,18 @@
 import React, {Component} from 'react';
-import {View, Text, FlatList, ActivityIndicator} from 'react-native';
+import {
+  View,
+  Text,
+  FlatList,
+  ActivityIndicator,
+  ScrollView,
+} from 'react-native';
 import {AppStyles, Images, FontSize} from '../../Themes';
 import {EventItemCard} from '../../Components';
 import {height} from 'react-native-dimension';
 import {saveData, getAllOfCollection} from '../../Backend/utility';
 import moment from 'moment';
 import {_retrieveData} from '../../Backend/AsyncFuncs';
+import firebase from '@react-native-firebase/app';
 
 class Home extends Component {
   constructor(props) {
@@ -20,13 +27,19 @@ class Home extends Component {
     this.setState({loading: true});
     this.userData = await _retrieveData('userData');
     this.userData = JSON.parse(this.userData);
-    const events = await getAllOfCollection('Events');
-    const upcomming_events = events.filter(element => {
-      let date = moment(new Date(element.date.seconds * 1000));
-      let curentDate = new Date();
-      return date.diff(curentDate, 'days') > 0 && element.status == true;
-    });
-    this.setState({loading: false, events: upcomming_events});
+
+    await firebase
+      .firestore()
+      .collection('Events')
+      .onSnapshot(async doc => {
+        const events = await getAllOfCollection('Events');
+        const upcomming_events = events.filter(element => {
+          let date = moment(new Date(element.date.seconds * 1000));
+          let curentDate = new Date();
+          return date.diff(curentDate, 'days') > 0 && element.status == true;
+        });
+        this.setState({loading: false, events: upcomming_events});
+      });
   }
 
   renderEvents = ({data, onPress}) => {
@@ -51,7 +64,7 @@ class Home extends Component {
             <ActivityIndicator size="large" color="#00ff00" />
           </View>
         ) : (
-          <>
+          <ScrollView>
             <View
               style={[
                 AppStyles.cardView,
@@ -111,7 +124,7 @@ class Home extends Component {
                 );
               }}
             />
-          </>
+          </ScrollView>
         )}
       </View>
     );
