@@ -59,10 +59,11 @@ class PairItemCard extends Component {
               style={{flex: 1}}
               renderItem={({item, index}) => (
                 <>
-                  <View style={{width: width(25)}}>
+                  <View style={{width: width(28)}}>
                     <MemberItem
                       image={{uri: item.profileImage}}
                       name={item.name}
+                      handicap={item.handicap}
                     />
                   </View>
                 </>
