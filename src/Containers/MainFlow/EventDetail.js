@@ -57,7 +57,6 @@ class EventDetail extends Component {
     await firebase
       .firestore()
       .collection('Events')
-      .doc(this.userData.uuid)
       .onSnapshot(async doc => {
         const event = await getData('Events', this.props.route.params.id);
         const users = await getAllOfCollection('Users');
@@ -279,13 +278,15 @@ class EventDetail extends Component {
         ]}>
         <Text style={[styles.title]}>{title}:</Text>
         <View style={{marginLeft: 14}}>
-          <UserImage
-            style={styles.pictureBorder}
-            source={{
-              uri: player && player.profileImage,
-            }}
-            size={totalSize(5)}
-          />
+          {player && (
+            <UserImage
+              style={styles.pictureBorder}
+              source={{
+                uri: player && player.profileImage,
+              }}
+              size={totalSize(5)}
+            />
+          )}
         </View>
         <Text style={[styles.info]}>{info}</Text>
       </View>
@@ -406,11 +407,15 @@ class EventDetail extends Component {
                   location={this.state.registerLoading}
                   //textStyle={[AppStyles.textRegular, AppStyles.textWhite]}
                   onPress={() => {
-                    let newParticipant = {};
-                    newParticipant.userId = this.userData.uuid;
-                    newParticipant.paid = false;
-                    newParticipant.withdrawn = false;
-                    this.saveParticiapnts(newParticipant);
+                    if (event.entry) {
+                      let newParticipant = {};
+                      newParticipant.userId = this.userData.uuid;
+                      newParticipant.paid = false;
+                      newParticipant.withdrawn = false;
+                      this.saveParticiapnts(newParticipant);
+                    } else {
+                      Toast.show('Event Entry is closed');
+                    }
                   }}
                   buttonStyle={[{backgroundColor: Colors.appColor2}]}
                 />
@@ -426,6 +431,24 @@ class EventDetail extends Component {
                 </Text>
               </View>
             ) : null}
+
+            <View style={[AppStyles.compContainer, {}]}>
+              <Text style={[styles.title]}>Registered Players</Text>
+            </View>
+            <this.renderRegisteredMembers data={registered_members} />
+            {event.groups && event.groups.length ? (
+              <>
+                <View
+                  style={[
+                    AppStyles.compContainer,
+                    {marginBottom: 0, marginTop: height(5)},
+                  ]}>
+                  <Text style={[styles.title]}>Pairings</Text>
+                </View>
+                <this.renderPairing data={event.groups} />
+              </>
+            ) : null}
+
             <View
               style={[
                 {backgroundColor: Colors.appBgColor2, marginTop: height(2.5)},
@@ -463,23 +486,6 @@ class EventDetail extends Component {
                 player={event.lowestGrosePlayer}
               />
             </View>
-
-            <View style={[AppStyles.compContainer, {}]}>
-              <Text style={[styles.title]}>Registered Players</Text>
-            </View>
-            <this.renderRegisteredMembers data={registered_members} />
-            {event.groups && event.groups.length ? (
-              <>
-                <View
-                  style={[
-                    AppStyles.compContainer,
-                    {marginBottom: 0, marginTop: height(5)},
-                  ]}>
-                  <Text style={[styles.title]}>Pairings</Text>
-                </View>
-                <this.renderPairing data={event.groups} />
-              </>
-            ) : null}
           </ScrollView>
         )}
       </View>
