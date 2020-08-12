@@ -505,6 +505,11 @@ const AppStackScreens = () => {
           headerTintColor: Colors.appTextColor6,
         })}
       />
+      <AuthStack.Screen
+        name="login"
+        component={Login}
+        options={{headerShown: false}}
+      />
     </AppStack.Navigator>
   );
 };

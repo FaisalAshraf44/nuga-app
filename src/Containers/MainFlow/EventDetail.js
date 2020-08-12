@@ -432,23 +432,6 @@ class EventDetail extends Component {
               </View>
             ) : null}
 
-            <View style={[AppStyles.compContainer, {}]}>
-              <Text style={[styles.title]}>Registered Players</Text>
-            </View>
-            <this.renderRegisteredMembers data={registered_members} />
-            {event.groups && event.groups.length ? (
-              <>
-                <View
-                  style={[
-                    AppStyles.compContainer,
-                    {marginBottom: 0, marginTop: height(5)},
-                  ]}>
-                  <Text style={[styles.title]}>Pairings</Text>
-                </View>
-                <this.renderPairing data={event.groups} />
-              </>
-            ) : null}
-
             <View
               style={[
                 {backgroundColor: Colors.appBgColor2, marginTop: height(2.5)},
@@ -470,22 +453,43 @@ class EventDetail extends Component {
                 second="Jack Thomas"
                 third="Max Lee"
               /> */}
-              <this.TitleWithInfo
-                title="NTP"
-                info={event.ntp}
-                player={event.ntpPlayer}
-              />
-              <this.TitleWithInfo
-                title="Longest Drive"
-                info={event.longestDrive}
-                player={event.longestDrivePlayer}
-              />
-              <this.TitleWithInfo
-                title="Lowest Gross"
-                info={event.lowestGrose}
-                player={event.lowestGrosePlayer}
-              />
+              {event.otherResults ? (
+                <>
+                  <this.TitleWithInfo
+                    title="NTP"
+                    info={event.otherResults.ntp}
+                    player={event.otherResults.ntpPlayer}
+                  />
+                  <this.TitleWithInfo
+                    title="Longest Drive"
+                    info={event.otherResults.longestDrive}
+                    player={event.otherResults.longestDrivePlayer}
+                  />
+                  <this.TitleWithInfo
+                    title="Lowest Gross"
+                    info={event.otherResults.lowestGrose}
+                    player={event.otherResults.lowestGrosePlayer}
+                  />
+                </>
+              ) : null}
             </View>
+
+            <View style={[AppStyles.compContainer, {}]}>
+              <Text style={[styles.title]}>Registered Players</Text>
+            </View>
+            <this.renderRegisteredMembers data={registered_members} />
+            {event.groups && event.groups.length ? (
+              <>
+                <View
+                  style={[
+                    AppStyles.compContainer,
+                    {marginBottom: 0, marginTop: height(5)},
+                  ]}>
+                  <Text style={[styles.title]}>Pairings</Text>
+                </View>
+                <this.renderPairing data={event.groups} />
+              </>
+            ) : null}
           </ScrollView>
         )}
       </View>
