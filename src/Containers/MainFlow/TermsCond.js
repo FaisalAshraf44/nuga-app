@@ -26,7 +26,7 @@ class TermsCond extends Component {
     const terms = await getData('Terms', '1');
     this.setState({terms, loading: false});
 
-    console.log('terms :', terms);
+    // console.log('terms :', terms);
   }
 
   render() {

@@ -7,6 +7,10 @@ import {
   Button,
   ScrollView,
   Modal,
+  Alert,
+  BackHandler,
+  TouchableOpacity,
+  Dimensions,
 } from 'react-native';
 import {AppStyles, Images, Colors} from '../../Themes';
 import LinearGradient from 'react-native-linear-gradient';
@@ -18,6 +22,7 @@ import {_storeData} from '../../Backend/AsyncFuncs';
 import {saveData, getData} from '../../Backend/utility';
 import {RootConsumer} from '../../Backend/Context';
 import Toast from 'react-native-simple-toast';
+import HTML from 'react-native-render-html';
 
 let globalContext = null;
 
@@ -36,6 +41,8 @@ class Login extends Component {
       forgotPasswordEmail: '',
       user: {},
       loading: false,
+      loadingTerms: false,
+      terms: '',
       showSpinner: false,
       showWarning: false,
       ErrorMessege: '',
@@ -44,8 +51,38 @@ class Login extends Component {
       selected_screen_index: 0,
       isForgotPasswordModalVisible: false,
       isResetPasswordModalVisible: false,
+      isTermsModal: false,
+      text: '',
     };
   }
+
+  backAction = () => {
+    Alert.alert('Hold on!', 'Are you sure you want to go exit?', [
+      {
+        text: 'Cancel',
+        onPress: () => null,
+        style: 'cancel',
+      },
+      {text: 'YES', onPress: () => BackHandler.exitApp()},
+    ]);
+    return true;
+  };
+
+  async componentDidMount() {
+    this.setState({loadingTerms: true});
+    const terms = await getData('Terms', '1');
+
+    this.backHandler = BackHandler.addEventListener(
+      'hardwareBackPress',
+      this.backAction,
+    );
+    this.setState({terms, loadingTerms: false});
+  }
+
+  componentWillUnmount() {
+    this.backHandler.remove();
+  }
+
   updateScreenIndex = selected_screen_index => {
     this.setState({selected_screen_index});
   };
@@ -56,6 +93,11 @@ class Login extends Component {
   toggleResetPasswordModal = () =>
     this.setState({
       isResetPasswordModalVisible: !this.state.isResetPasswordModalVisible,
+    });
+
+  toggleTermsModal = () =>
+    this.setState({
+      isTermsModal: !this.state.isTermsModal,
     });
 
   onDoneForgotPassword = async () => {
@@ -294,6 +336,9 @@ class Login extends Component {
       selected_screen_index,
       isForgotPasswordModalVisible,
       isResetPasswordModalVisible,
+      isTermsModal,
+      loadingTerms,
+      terms,
     } = this.state;
     const Screens = ['Login', 'Register'];
     const {navigate} = this.props.navigation;
@@ -458,7 +503,9 @@ class Login extends Component {
                           }}
                           containerStyle={{marginTop: height(2)}}
                         />
-                        <View
+                        <TouchableOpacity
+                          onPress={this.toggleTermsModal}
+                          activeOpacity={0.5}
                           style={[
                             AppStyles.compContainer,
                             {marginVertical: height(1.5)},
@@ -473,7 +520,7 @@ class Login extends Component {
                             By creating an account, you agree to our Terms and
                             Conditions
                           </Text>
-                        </View>
+                        </TouchableOpacity>
 
                         <ButtonColored
                           onPress={() => {
@@ -626,6 +673,47 @@ class Login extends Component {
                         />
                       </View>
                     </ScrollView>
+                  </View>
+                </View>
+              </Modal>
+              <Modal visible={isTermsModal} transparent animationType="fade">
+                <View
+                  style={{
+                    flex: 1,
+                    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+                  }}>
+                  <View
+                    style={[
+                      {
+                        flex: 8,
+                        backgroundColor: Colors.appBgColor1,
+                        borderRadius: 25,
+                        marginVertical: 24,
+                        marginHorizontal: 16,
+                        paddingVertical: 16,
+                        paddingHorizontal: 8,
+                      },
+                      AppStyles.shadow,
+                    ]}>
+                    <TouchableOpacity onPress={this.toggleTermsModal}>
+                      <Icon
+                        name="close"
+                        type="material-community"
+                        style={{alignSelf: 'flex-end', marginRight: 8}}
+                      />
+                    </TouchableOpacity>
+                    {loadingTerms ? (
+                      <View style={{flex: 1, justifyContent: 'center'}}>
+                        <ActivityIndicator size="large" color="#00ff00" />
+                      </View>
+                    ) : (
+                      <ScrollView>
+                        <HTML
+                          html={terms.termsOfService}
+                          imagesMaxWidth={Dimensions.get('window').width}
+                        />
+                      </ScrollView>
+                    )}
                   </View>
                 </View>
               </Modal>
