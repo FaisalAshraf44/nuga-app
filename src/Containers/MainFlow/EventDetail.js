@@ -83,6 +83,29 @@ class EventDetail extends Component {
       });
   };
 
+  goBackLoad = () => {
+    this.loadAllData();
+  };
+
+  registerAndPay = (newParticipant, event) => {
+    let updatedParticipants = this.state.event.participants;
+    let registeredAndPaid = false;
+    updatedParticipants.forEach(element => {
+      if (element.userId == newParticipant.userId) {
+        if (element.paid && !element.withdrawn) {
+          Toast.show('You have already Registered and Paid.');
+          registeredAndPaid = true;
+        }
+      }
+    });
+    if (!registeredAndPaid) {
+      this.props.navigation.navigate('registerPay', {
+        event,
+        load: this.goBackLoad,
+      });
+    }
+  };
+
   saveParticiapnts = newParticipant => {
     this.setState({registerLoading: true});
     let updatedParticipants = this.state.event.participants;
@@ -420,9 +443,17 @@ class EventDetail extends Component {
                   buttonStyle={[{backgroundColor: Colors.appColor2}]}
                 />
                 <ButtonColoredSmall
-                  onPress={() =>
-                    this.props.navigation.navigate('registerPay', {event})
-                  }
+                  onPress={() => {
+                    if (event.entry) {
+                      let newParticipant = {};
+                      newParticipant.userId = this.userData.uuid;
+                      newParticipant.paid = false;
+                      newParticipant.withdrawn = false;
+                      this.registerAndPay(newParticipant, event);
+                    } else {
+                      Toast.show('Event Entry is closed');
+                    }
+                  }}
                   text="Register & Pay"
                   //textStyle={[AppStyles.textRegular, AppStyles.textWhite]}
                   buttonStyle={[{backgroundColor: Colors.appColor2}]}

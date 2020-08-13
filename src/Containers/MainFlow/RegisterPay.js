@@ -5,6 +5,7 @@ import {
   FlatList,
   ActivityIndicator,
   ScrollView,
+  KeyboardAvoidingView,
 } from 'react-native';
 import {AppStyles, Images, FontSize} from '../../Themes';
 import {
@@ -13,9 +14,15 @@ import {
   Input,
   ButtonColored,
 } from '../../Components';
+import Stripe from 'react-native-stripe-api';
+import Toast from 'react-native-simple-toast';
 
 import {height, width} from 'react-native-dimension';
-import {saveData, getAllOfCollection} from '../../Backend/utility';
+import {
+  getData,
+  getAllOfCollection,
+  updateEventParticipants,
+} from '../../Backend/utility';
 import moment from 'moment';
 import {_retrieveData} from '../../Backend/AsyncFuncs';
 import firebase from '@react-native-firebase/app';
@@ -26,129 +33,185 @@ class RegisterPay extends Component {
     this.state = {
       loading: false,
       events: [],
-      cardNumber: '',
+      card_number: '',
       expiry: '',
       cvc: '',
       buttonLoading: false,
     };
   }
 
-  //   async componentDidMount() {
-  //     this.setState({loading: true});
-  //     this.userData = await _retrieveData('userData');
-  //     this.userData = JSON.parse(this.userData);
+  async componentDidMount() {
+    this.userData = await _retrieveData('userData');
+    this.userData = JSON.parse(this.userData);
+  }
+  validate = () => {
+    const {card_number, expiry, cvc} = this.state;
+    if (card_number == '') {
+      Toast.show('The card number cannot be empty');
+      return false;
+    }
+    if (expiry == '') {
+      Toast.show('The expiry date cannot be empty');
+      return false;
+    }
+    if (cvc == '') {
+      Toast.show('The CVC cannot be empty');
+      return false;
+    }
+    return true;
+  };
 
-  //     await firebase
-  //       .firestore()
-  //       .collection('Events')
-  //       .onSnapshot(async doc => {
-  //         const events = await getAllOfCollection('Events');
-  //         const upcomming_events = events.filter(element => {
-  //           let date = moment(new Date(element.date.seconds * 1000));
-  //           let curentDate = new Date();
-  //           return date.diff(curentDate, 'days') > 0 && element.status == true;
-  //         });
-  //         this.setState({loading: false, events: upcomming_events});
-  //       });
-  //   }
+  onSubmit = async () => {
+    const {card_number, expiry, cvc} = this.state;
+    const validated = this.validate();
 
-  //   renderEvents = ({data, onPress}) => {
-  //     const {events} = this.state;
-  //     events.sort((a, b) => {
-  //       var nameA = moment(new Date(a.date.seconds * 1000));
-  //       // var nameA = a.item_name.charAt(0).toUpperCase();
-  //       var nameB = moment(new Date(b.date.seconds * 1000));
-  //       if (nameA.diff(nameB, 'days') < 0) {
-  //         return -1;
-  //       }
-  //       if (nameA.diff(nameB, 'days') > 0) {
-  //         return 1;
-  //       }
-  //       // names must be equal
-  //       return 0;
-  //     });
-  //     return (
-  //       <View style={{flex: 1}}>
-  //         {this.state.loading ? (
-  //           <View style={{flex: 1, justifyContent: 'center'}}>
-  //             <ActivityIndicator size="large" color="#00ff00" />
-  //           </View>
-  //         ) : (
-  //           <ScrollView>
-  //             <View
-  //               style={[
-  //                 AppStyles.cardView,
-  //                 {padding: 16, marginTop: height(2.5)},
-  //               ]}>
-  //               <Text
-  //                 style={[
-  //                   AppStyles.h6,
-  //                   AppStyles.textGreen2,
-  //                   AppStyles.textCenter,
-  //                 ]}>
-  //                 WELCOME TO NIGERIA-UK GOLFING ASSOCIATION (NUGA)
-  //               </Text>
+    if (validated) {
+      this.setState({loading: true});
 
-  //               <Text
-  //                 style={[
-  //                   AppStyles.textMedium,
-  //                   AppStyles.textGray,
-  //                   FontSize.small,
-  //                 ]}>
-  //                 NUGA is an organisation of UK resident Nigerians (including
-  //                 non-Nigerian friends, associates and affiliates) who play golf,
-  //                 support charity and develop friendship.
-  //               </Text>
-  //               <Text
-  //                 style={[
-  //                   AppStyles.textMedium,
-  //                   AppStyles.textGray,
-  //                   FontSize.medium,
-  //                 ]}>
-  //                 Members have a deep passion for the game of golf as they do for
-  //                 supporting charity, good causes and strong family values.
-  //                 Non-golfers who believe in NUGA’s motto of “Friendship,
-  //                 Integrity and Charity” are also members of the association.
-  //               </Text>
-  //             </View>
-  //             <FlatList
-  //               data={events}
-  //               renderItem={({item, index}) => {
-  //                 return (
-  //                   <EventItemCard
-  //                     onPress={() => onPress(item)}
-  //                     containerStyle={{
-  //                       marginTop: index === 0 ? height(2.5) : 0,
-  //                       marginBottom: height(2),
-  //                     }}
-  //                     image={item.image}
-  //                     title={item.name}
-  //                     location={item.location}
-  //                     date={moment(new Date(item.date.seconds * 1000)).format(
-  //                       'D',
-  //                     )}
-  //                     month={moment(new Date(item.date.seconds * 1000)).format(
-  //                       'MMM, YYYY',
-  //                     )}
-  //                   />
-  //                 );
-  //               }}
-  //             />
-  //           </ScrollView>
-  //         )}
-  //       </View>
-  //     );
-  //   };
+      const apiKey = 'pk_test_vArD0VAS7hAFdpSxOFG3Rxcc00Shqwwmbd';
+      const client = new Stripe(apiKey);
+
+      const token = await client
+        .createToken({
+          number: card_number.replace(/ /g, ''),
+          exp_month: expiry.split('/')[0],
+          exp_year: expiry.split('/')[1],
+          cvc: cvc,
+          address_zip: '12345',
+        })
+        .then(async i => {
+          console.log('create card response:', i);
+
+          if (i.error) {
+            // alert(i.error.message);
+            Toast.show(i.error.message);
+
+            this.setState({loading: false});
+          } else {
+            this.charge(i.id);
+          }
+        })
+        .catch(err => {
+          console.log('create card error:', err);
+
+          // alert(err.error.message);
+          this.setState({loading: false});
+        });
+    }
+  };
+
+  async charge(i, account) {
+    const {event} = this.props.route.params;
+
+    console.log('id:', i);
+    const body = {};
+    (body['amount'] = '2000'), (body['currency'] = 'usd'), (body['source'] = i);
+
+    if (event.entry) {
+      let data = await fetch('https://api.stripe.com/v1/charges', {
+        headers: {
+          // Use the correct MIME type for your server
+          Accept: 'application/json',
+          // Use the correct Content Type to send data in request body
+          'Content-Type': 'application/x-www-form-urlencoded',
+          // Use the Stripe publishable key as Bearer
+          Authorization: `Bearer sk_test_bVdj46Z3I2vwit1szFtGnh2300SM339QAy`,
+          // "Stripe-Account": account
+        },
+        // Use a proper HTTP method
+        method: 'post',
+        // Format the credit card data to a string of key-value pairs
+        // divided by &
+        body: Object.keys(body)
+          .map(key => key + '=' + body[key])
+          .join('&'),
+      });
+
+      let commits = await data.json().then(async response => {
+        console.log(response);
+        if (response.status == 'succeeded') {
+          // Toast.show('Paid succesfully');
+
+          let newParticipant = {};
+          newParticipant.userId = this.userData.uuid;
+          newParticipant.paid = true;
+          newParticipant.withdrawn = false;
+          this.saveParticiapnts(newParticipant);
+        } else {
+          console.log('Error:', response.error.message);
+          this.setState({loading: false});
+        }
+      });
+    } else {
+      Toast.show('Event Entry is closed');
+    }
+  }
+
+  saveParticiapnts = newParticipant => {
+    const {event} = this.props.route.params;
+
+    this.setState({loading: true});
+    let updatedParticipants = event.participants;
+    console.log('Participants:', updatedParticipants) ? event.participants : [];
+    let exists = false;
+    let withdrawn = false;
+    let registered = false;
+    updatedParticipants.forEach(element => {
+      if (element.userId == newParticipant.userId) {
+        if (element.withdrawn == true) {
+          element.withdrawn = false;
+          exists = false;
+          registered = true;
+          withdrawn = true;
+        } else {
+          exists = false;
+          registered = true;
+        }
+      }
+    });
+
+    if (!withdrawn && !registered) {
+      updatedParticipants.push(newParticipant);
+    }
+
+    if (!exists) {
+      updateEventParticipants(event.uuid, updatedParticipants)
+        .then(response => {
+          this.setState({
+            loading: false,
+          });
+          Toast.show('Registered & Paid successfully');
+          this.props.route.params.load();
+          this.props.navigation.goBack();
+          // this.loadAllData();
+        })
+        .catch(err => {
+          this.setState({
+            loading: false,
+          });
+          Toast.show(err);
+        });
+    } else {
+      Toast.show('You are already registered in this event');
+      this.setState({loading: false});
+    }
+  };
 
   render() {
     // const {events} = this.state;
     const {event} = this.props.route.params;
     console.log('======:', this.props.route);
     const {navigate} = this.props.navigation;
-    const {cardNumber, buttonLoading, expiry, cvc} = this.state;
+    const {card_number, buttonLoading, loading, expiry, cvc} = this.state;
+    const keyboardVerticalOffset = Platform.OS === 'ios' ? 40 : -100;
+
     return (
       <View style={AppStyles.mainContainer}>
-        {/* <this.renderEvents
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'position'}
+          keyboardVerticalOffset={keyboardVerticalOffset}>
+          <ScrollView>
+            {/* <this.renderEvents
           data={events}
           onPress={item =>
             navigate('eventDetail', {
@@ -158,65 +221,72 @@ class RegisterPay extends Component {
           }
         /> */}
 
-        <EventItemCard
-          //   onPress={() => onPress(event)}
-          containerStyle={{
-            marginTop: height(2.5),
-            marginBottom: height(2),
-          }}
-          image={event.image}
-          title={event.name}
-          location={event.location}
-          date={moment(new Date(event.date.seconds * 1000)).format('D')}
-          month={moment(new Date(event.date.seconds * 1000)).format(
-            'MMM, YYYY',
-          )}
-        />
+            <EventItemCard
+              //   onPress={() => onPress(event)}
+              containerStyle={{
+                marginTop: height(2.5),
+                marginBottom: height(2),
+              }}
+              image={event.image}
+              title={event.name}
+              location={event.location}
+              date={moment(new Date(event.date.seconds * 1000)).format('D')}
+              month={moment(new Date(event.date.seconds * 1000)).format(
+                'MMM, YYYY',
+              )}
+            />
 
-        <View style={{marginTop: 16}}>
-          <InputWithIcon
-            title="Card Number"
-            //   value="John"
-            value={cardNumber}
-            onChangeText={text => {
-              this.setState({cardNumber: text});
-            }}
-            iconName="credit-card"
-            placeholder="1234 5678 1234 5678"
-          />
-        </View>
+            <View style={{marginTop: 16}}>
+              <InputWithIcon
+                title="Card Number"
+                //   value="John"
+                value={card_number}
+                onChangeText={text => {
+                  this.setState({card_number: text});
+                }}
+                iconName="credit-card"
+                placeholder="1234 5678 1234 5678"
+              />
+            </View>
 
-        <View style={{flexDirection: 'row', marginTop: 16}}>
-          <Input
-            title="Expiry"
-            //   value="John"
-            value={cardNumber}
-            onChangeText={text => {
-              this.setState({cardNumber: text});
-            }}
-            containerStyle={{width: width(50)}}
-            iconName="credit-card"
-            placeholder="MM / YY"
-          />
-          <Input
-            title="CVC"
-            //   value="John"
-            value={cardNumber}
-            onChangeText={text => {
-              this.setState({cardNumber: text});
-            }}
-            containerStyle={{width: width(50)}}
-            iconName="credit-card"
-            placeholder="123"
-          />
-        </View>
+            <View style={{flexDirection: 'row', marginTop: 16}}>
+              <Input
+                title="Expiry"
+                maxLength={5}
+                value={expiry}
+                onChangeText={text => {
+                  if (text.length == 2) {
+                    this.setState({expiry: text + '/'});
+                  } else {
+                    this.setState({expiry: text});
+                  }
+                }}
+                containerStyle={{width: width(50)}}
+                iconName="credit-card"
+                placeholder="MM / YY"
+              />
+              <Input
+                title="CVC"
+                //   value="John"
+                value={cvc}
+                onChangeText={text => {
+                  this.setState({cvc: text});
+                }}
+                containerStyle={{width: width(50)}}
+                iconName="credit-card"
+                placeholder="123"
+              />
+            </View>
 
-        <ButtonColored
-          loading={buttonLoading}
-          // onPress={th}
-          text="Register & Pay"
-          buttonStyle={{marginVertical: height(5)}}
-        />
+            <ButtonColored
+              loading={loading}
+              // onPress={th}
+              onPress={() => this.onSubmit()}
+              text="Register & Pay"
+              buttonStyle={{marginVertical: height(5)}}
+            />
+          </ScrollView>
+        </KeyboardAvoidingView>
       </View>
     );
   }

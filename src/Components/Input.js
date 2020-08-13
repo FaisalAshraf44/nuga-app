@@ -26,6 +26,7 @@ class Input extends Component {
       inputRight,
       inputContainerStyle,
       keyboardType,
+      maxLength,
     } = this.props;
     return (
       <View style={[{justifyContent: 'center'}, containerStyle]}>
@@ -46,6 +47,7 @@ class Input extends Component {
           </View> */}
           <View style={{flex: 8.5}}>
             <TextInput
+              maxLength={maxLength ? maxLength : 3}
               keyboardType={keyboardType ? keyboardType : 'default'}
               onChangeText={onChangeText}
               value={value}
