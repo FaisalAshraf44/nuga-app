@@ -5,5 +5,15 @@ import Events from './Events';
 import Profile from './Profile';
 import EventDetail from './EventDetail';
 import ChangePassword from './ChangePassword';
+import RegisterPay from './RegisterPay';
 
-export {Home, AboutUs, TermsCond, Events, Profile, EventDetail, ChangePassword};
+export {
+  Home,
+  AboutUs,
+  TermsCond,
+  Events,
+  Profile,
+  EventDetail,
+  ChangePassword,
+  RegisterPay,
+};

@@ -420,6 +420,9 @@ class EventDetail extends Component {
                   buttonStyle={[{backgroundColor: Colors.appColor2}]}
                 />
                 <ButtonColoredSmall
+                  onPress={() =>
+                    this.props.navigation.navigate('registerPay', {event})
+                  }
                   text="Register & Pay"
                   //textStyle={[AppStyles.textRegular, AppStyles.textWhite]}
                   buttonStyle={[{backgroundColor: Colors.appColor2}]}

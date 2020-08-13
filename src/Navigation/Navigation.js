@@ -26,6 +26,7 @@ import {
   Profile,
   EventDetail,
   ChangePassword,
+  RegisterPay,
 } from '../Containers/MainFlow';
 import {DrawerIcon, UserImage} from '../Components';
 import {width, height, totalSize} from 'react-native-dimension';
@@ -499,6 +500,17 @@ const AppStackScreens = () => {
         component={EventDetail}
         options={({navigation, route}) => ({
           title: 'Event Detail',
+          headerTitleAlign: 'center',
+          headerTitleStyle: AppStyles.headerTitleStyle,
+          headerStyle: AppStyles.headerStyle,
+          headerTintColor: Colors.appTextColor6,
+        })}
+      />
+      <AppStack.Screen
+        name="registerPay"
+        component={RegisterPay}
+        options={({navigation, route}) => ({
+          title: 'Register & Pay',
           headerTitleAlign: 'center',
           headerTitleStyle: AppStyles.headerTitleStyle,
           headerStyle: AppStyles.headerStyle,
