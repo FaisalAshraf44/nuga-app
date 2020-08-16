@@ -4,6 +4,7 @@ import Navigation from './src/Navigation/Navigation';
 import {RootContext} from './src/Backend/Context';
 import {fcmService} from './src/FCMService';
 import {localNotificationService} from './src/LocalNotificationService';
+import {_storeData} from './src/Backend/AsyncFuncs';
 
 class App extends Component {
   constructor(props) {
@@ -11,8 +12,9 @@ class App extends Component {
     this.state = {};
   }
 
-  onRegister = token => {
+  onRegister = async token => {
     console.log('[App] onRegister: ', token);
+    await _storeData('fcmToken', token);
   };
 
   onNotification = notify => {

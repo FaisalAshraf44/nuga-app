@@ -18,7 +18,7 @@ import {Logo, InputWithIcon, ButtonColored} from '../../Components';
 import {totalSize, width, height} from 'react-native-dimension';
 import {ButtonGroup, Icon} from 'react-native-elements';
 import auth from '@react-native-firebase/auth';
-import {_storeData} from '../../Backend/AsyncFuncs';
+import {_storeData, _retrieveData} from '../../Backend/AsyncFuncs';
 import {saveData, getData} from '../../Backend/utility';
 import {RootConsumer} from '../../Backend/Context';
 import Toast from 'react-native-simple-toast';
@@ -288,6 +288,9 @@ class Login extends Component {
       .createUserWithEmailAndPassword(this.state.email2, this.state.password2)
       .then(async user => {
         await _storeData('Token', user.user.uid);
+        const fcmToken = await _retrieveData('fcmToken');
+        console.log('fcm == :', fcmToken);
+
         await saveData('Users', user.user.uid, {
           uuid: user.user.uid,
           fname: this.state.fname,
@@ -301,6 +304,7 @@ class Login extends Component {
           membership: 'Unknown',
           profileImage: '',
           timestampRegister: new Date(),
+          fcmToken,
         });
         const userData = await getData('Users', user.user.uid);
         globalContext.setUserData(userData);
