@@ -23,6 +23,7 @@ import {saveData, getData} from '../../Backend/utility';
 import {RootConsumer} from '../../Backend/Context';
 import Toast from 'react-native-simple-toast';
 import HTML from 'react-native-render-html';
+import firebase from '@react-native-firebase/app';
 
 let globalContext = null;
 
@@ -70,13 +71,18 @@ class Login extends Component {
 
   async componentDidMount() {
     this.setState({loadingTerms: true});
-    const terms = await getData('Terms', '1');
+    await firebase
+      .firestore()
+      .collection('Terms')
+      .onSnapshot(async doc => {
+        const terms = await getData('Terms', '1');
+        this.setState({terms, loadingTerms: false});
+      });
 
     this.backHandler = BackHandler.addEventListener(
       'hardwareBackPress',
       this.backAction,
     );
-    this.setState({terms, loadingTerms: false});
   }
 
   componentWillUnmount() {
@@ -499,6 +505,7 @@ class Login extends Component {
                           iconName="lock"
                           placeholder="Password"
                           value={this.state.password2}
+                          secureTextEntry={true}
                           onChangeText={e => {
                             this.setState({
                               password2: e,

@@ -9,6 +9,7 @@ import {
 import {AppStyles} from '../../Themes';
 import {getData} from '../../Backend/utility';
 import HTML from 'react-native-render-html';
+import firebase from '@react-native-firebase/app';
 
 class TermsCond extends Component {
   constructor(props) {
@@ -23,9 +24,13 @@ class TermsCond extends Component {
 
   async componentDidMount() {
     this.setState({loading: true});
-    const terms = await getData('Terms', '1');
-    this.setState({terms, loading: false});
-
+    await firebase
+      .firestore()
+      .collection('Terms')
+      .onSnapshot(async doc => {
+        const terms = await getData('Terms', '1');
+        this.setState({terms, loading: false});
+      });
     // console.log('terms :', terms);
   }
 

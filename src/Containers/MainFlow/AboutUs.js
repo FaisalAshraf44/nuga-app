@@ -11,6 +11,7 @@ import {Logo} from '../../Components';
 import {totalSize} from 'react-native-dimension';
 import HTML from 'react-native-render-html';
 import {getData} from '../../Backend/utility';
+import firebase from '@react-native-firebase/app';
 
 class AboutUs extends Component {
   constructor(props) {
@@ -25,10 +26,14 @@ class AboutUs extends Component {
 
   async componentDidMount() {
     this.setState({loading: true});
-    const about = await getData('About', '1');
-    this.setState({about, loading: false});
-
-    console.log('About :', about);
+    await firebase
+      .firestore()
+      .collection('About')
+      .onSnapshot(async doc => {
+        const about = await getData('About', '1');
+        this.setState({about, loading: false});
+        console.log('About :', about);
+      });
   }
 
   render() {

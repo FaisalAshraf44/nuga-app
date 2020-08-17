@@ -36,6 +36,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import {getData} from '../Backend/utility';
 import {_storeData} from '../Backend/AsyncFuncs';
 import firebase from '@react-native-firebase/app';
+import RNRestart from 'react-native-restart';
 
 const Stack = createStackNavigator();
 const AuthStack = createStackNavigator();
@@ -347,8 +348,10 @@ const CustomDrawerContent = props => {
                           await AsyncStorage.clear();
                           await firebase.auth().signOut();
                           globalContext && globalContext.setUserData({});
+                          // RNRestart.Restart();
 
-                          props.navigation.navigate('login');
+                          // props.navigation.navigate('login');
+                          props.navigation.navigate('Auth');
                         },
                       },
                       {
@@ -517,7 +520,7 @@ const AppStackScreens = () => {
           headerTintColor: Colors.appTextColor6,
         })}
       />
-      <AuthStack.Screen
+      <Stack.Screen
         name="login"
         component={Login}
         options={{headerShown: false}}

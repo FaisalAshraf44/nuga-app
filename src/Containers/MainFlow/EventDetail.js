@@ -7,6 +7,7 @@ import {
   FlatList,
   StyleSheet,
   ActivityIndicator,
+  Alert,
 } from 'react-native';
 import {AppStyles, Colors, Images, FontFamily} from '../../Themes';
 import {height, totalSize, width} from 'react-native-dimension';
@@ -460,7 +461,16 @@ class EventDetail extends Component {
                 />
                 <Text
                   style={[AppStyles.textRegular, AppStyles.textGreen2]}
-                  onPress={() => this.withdrawParticiapnt(found)}>
+                  onPress={() => {
+                    if (event.entry) {
+                      this.withdrawParticiapnt(found);
+                    } else {
+                      Alert.alert(
+                        'Withdraw',
+                        'This event is closed for entry, please email admin@nugagolf.com to withdraw your registration from the event if you still want to withdraw. Thanks',
+                      );
+                    }
+                  }}>
                   Withdraw
                 </Text>
               </View>
