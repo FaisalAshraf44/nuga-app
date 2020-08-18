@@ -5,6 +5,7 @@ import {
   ScrollView,
   ActivityIndicator,
   Dimensions,
+  Linking,
 } from 'react-native';
 import {AppStyles} from '../../Themes';
 import {Logo} from '../../Components';
@@ -53,6 +54,7 @@ class AboutUs extends Component {
               <HTML
                 html={about.about}
                 imagesMaxWidth={Dimensions.get('window').width}
+                onLinkPress={(event, href) => Linking.openURL(href)}
               />
             )}
           </View>

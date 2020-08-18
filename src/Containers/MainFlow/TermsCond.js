@@ -5,6 +5,7 @@ import {
   ScrollView,
   Dimensions,
   ActivityIndicator,
+  Linking,
 } from 'react-native';
 import {AppStyles} from '../../Themes';
 import {getData} from '../../Backend/utility';
@@ -48,6 +49,7 @@ class TermsCond extends Component {
               <HTML
                 html={terms.termsOfService}
                 imagesMaxWidth={Dimensions.get('window').width}
+                onLinkPress={(event, href) => Linking.openURL(href)}
               />
             )}
           </View>

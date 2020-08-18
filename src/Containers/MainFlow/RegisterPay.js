@@ -37,12 +37,16 @@ class RegisterPay extends Component {
       expiry: '',
       cvc: '',
       buttonLoading: false,
+      eventData: '',
     };
   }
 
   async componentDidMount() {
+    const {event} = this.props.route.params;
+
     this.userData = await _retrieveData('userData');
     this.userData = JSON.parse(this.userData);
+    this.setState({eventData: event});
   }
   validate = () => {
     const {card_number, expiry, cvc} = this.state;
@@ -68,7 +72,8 @@ class RegisterPay extends Component {
     if (validated) {
       this.setState({loading: true});
 
-      const apiKey = 'pk_test_vArD0VAS7hAFdpSxOFG3Rxcc00Shqwwmbd';
+      // const apiKey = 'pk_test_vArD0VAS7hAFdpSxOFG3Rxcc00Shqwwmbd';
+      const apiKey = 'pk_test_A3714XWMkYLbI1hWdyzyXQFc000Z2qU0a1';
       const client = new Stripe(apiKey);
 
       const token = await client
@@ -100,12 +105,24 @@ class RegisterPay extends Component {
     }
   };
 
-  async charge(i, account) {
+  charge = async (i, account) => {
     const {event} = this.props.route.params;
+
+    let amount =
+      this.userData && this.userData.membership == 'Paid'
+        ? event.fee
+        : event.guestfee;
+
+    amount = amount * 100;
 
     console.log('id:', i);
     const body = {};
-    (body['amount'] = '2000'), (body['currency'] = 'usd'), (body['source'] = i);
+    (body['amount'] = amount),
+      (body['currency'] = 'gbp'),
+      (body['source'] = i),
+      (body['description'] = `${this.userData.name}(${
+        this.userData.email
+      }) paid "${event.name}" event fee.`);
 
     if (event.entry) {
       let data = await fetch('https://api.stripe.com/v1/charges', {
@@ -115,7 +132,9 @@ class RegisterPay extends Component {
           // Use the correct Content Type to send data in request body
           'Content-Type': 'application/x-www-form-urlencoded',
           // Use the Stripe publishable key as Bearer
-          Authorization: `Bearer sk_test_bVdj46Z3I2vwit1szFtGnh2300SM339QAy`,
+          // Authorization: `Bearer sk_test_bVdj46Z3I2vwit1szFtGnh2300SM339QAy`,
+          Authorization: `Bearer sk_test_51GduKwJaK789YjBS4J1rwt9OmBScSeVRVsVY8MpsIDenP5KEPxOWT54rgM8ceL3KyuJ6UJOCPyFBLH80Um3kiLao000IeqWiAx`,
+
           // "Stripe-Account": account
         },
         // Use a proper HTTP method
@@ -145,7 +164,7 @@ class RegisterPay extends Component {
     } else {
       Toast.show('Event Entry is closed');
     }
-  }
+  };
 
   saveParticiapnts = newParticipant => {
     const {event} = this.props.route.params;

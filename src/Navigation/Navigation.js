@@ -82,6 +82,11 @@ const HomeStackScreens = () => {
           title: 'Home',
         })}
       />
+      <Stack.Screen
+        name="login"
+        component={Login}
+        options={{headerShown: false}}
+      />
     </HomeStack.Navigator>
   );
 };
@@ -101,6 +106,11 @@ const TermsCondStackScreens = () => {
         ),
       })}>
       <TermsCondStack.Screen name="termsCond" component={TermsCond} />
+      <Stack.Screen
+        name="login"
+        component={Login}
+        options={{headerShown: false}}
+      />
     </TermsCondStack.Navigator>
   );
 };
@@ -121,6 +131,11 @@ const AboutUsStackScreens = () => {
         ),
       })}>
       <AboutUsStack.Screen name="aboutus" component={AboutUs} />
+      <Stack.Screen
+        name="login"
+        component={Login}
+        options={{headerShown: false}}
+      />
     </AboutUsStack.Navigator>
   );
 };
@@ -140,6 +155,11 @@ const EventsStackScreens = () => {
         ),
       })}>
       <EventsStack.Screen name="events" component={Events} />
+      <Stack.Screen
+        name="login"
+        component={Login}
+        options={{headerShown: false}}
+      />
     </EventsStack.Navigator>
   );
 };

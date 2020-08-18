@@ -314,7 +314,7 @@ class EventDetail extends Component {
     );
   };
   TitleWithInfo = ({title, info, player}) => {
-    return (
+    return info || player ? (
       <View
         style={[
           AppStyles.rowCompContainer,
@@ -334,7 +334,7 @@ class EventDetail extends Component {
         </View>
         <Text style={[styles.info]}>{info}</Text>
       </View>
-    );
+    ) : null;
   };
   render() {
     const {item} = this.props.route.params;
@@ -538,10 +538,14 @@ class EventDetail extends Component {
               ) : null}
             </View>
 
-            <View style={[AppStyles.compContainer, {}]}>
-              <Text style={[styles.title]}>Registered Players</Text>
-            </View>
-            <this.renderRegisteredMembers data={registered_members} />
+            {registered_members && registered_members.length ? (
+              <>
+                <View style={[AppStyles.compContainer, {}]}>
+                  <Text style={[styles.title]}>Registered Players</Text>
+                </View>
+                <this.renderRegisteredMembers data={registered_members} />
+              </>
+            ) : null}
             {event.groups && event.groups.length ? (
               <>
                 <View
