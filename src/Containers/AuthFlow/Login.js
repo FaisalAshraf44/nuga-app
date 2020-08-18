@@ -526,10 +526,18 @@ class Login extends Component {
                               AppStyles.textRegular,
                               AppStyles.textWhite,
                               AppStyles.textCenter,
-                              {},
+                              // {textDecorationLine: 'underline'},
                             ]}>
-                            By creating an account, you agree to our Terms and
-                            Conditions
+                            By creating an account, you agree to our{' '}
+                            <Text
+                              style={[
+                                AppStyles.textRegular,
+                                AppStyles.textWhite,
+                                AppStyles.textCenter,
+                                {textDecorationLine: 'underline'},
+                              ]}>
+                              Terms and Conditions
+                            </Text>
                           </Text>
                         </TouchableOpacity>
 

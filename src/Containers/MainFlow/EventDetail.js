@@ -24,7 +24,7 @@ import {
   getAllOfCollection,
   updateEventParticipants,
 } from '../../Backend/utility';
-import {_retrieveData} from '../../Backend/AsyncFuncs';
+import {_retrieveData, _storeData} from '../../Backend/AsyncFuncs';
 import firebase from '@react-native-firebase/app';
 
 import moment from 'moment';
@@ -50,6 +50,21 @@ class EventDetail extends Component {
     this.userData = await _retrieveData('userData');
     this.userData = JSON.parse(this.userData);
 
+    await firebase
+      .firestore()
+      .collection('Users')
+      .doc(this.userData.uuid)
+      .onSnapshot(async doc => {
+        console.log('user update on event details:', doc.data());
+        // const userData = await getData('Users', this.userData.uid);
+        if (doc.data()) {
+          await _storeData('userData', JSON.stringify(doc.data()));
+          this.userData = doc.data();
+          this.loadAllData();
+        }
+      });
+
+    console.log('details page userData:', this.userData);
     this.loadAllData();
   }
 
@@ -89,7 +104,9 @@ class EventDetail extends Component {
   };
 
   registerAndPay = (newParticipant, event) => {
-    let updatedParticipants = this.state.event.participants;
+    let updatedParticipants = this.state.event.participants
+      ? this.state.event.participants
+      : [];
     let registeredAndPaid = false;
     updatedParticipants.forEach(element => {
       if (element.userId == newParticipant.userId) {
@@ -109,10 +126,11 @@ class EventDetail extends Component {
 
   saveParticiapnts = newParticipant => {
     this.setState({registerLoading: true});
-    let updatedParticipants = this.state.event.participants;
-    console.log('Participants:', updatedParticipants)
+    let updatedParticipants = this.state.event.participants
       ? this.state.event.participants
       : [];
+    console.log('Participants:', updatedParticipants);
+
     let exists = false;
     let withdrawn = false;
     updatedParticipants.forEach(element => {
@@ -160,7 +178,9 @@ class EventDetail extends Component {
 
   withdrawParticiapnt = player => {
     this.setState({withdrawLoading: true});
-    let updatedParticipants = this.state.event.participants;
+    let updatedParticipants = this.state.event.participants
+      ? this.state.event.participants
+      : [];
     console.log('Player:', player);
     let exists = false;
     updatedParticipants.forEach(element => {

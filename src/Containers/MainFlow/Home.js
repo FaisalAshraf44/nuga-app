@@ -9,9 +9,9 @@ import {
 import {AppStyles, Images, FontSize} from '../../Themes';
 import {EventItemCard} from '../../Components';
 import {height} from 'react-native-dimension';
-import {saveData, getAllOfCollection} from '../../Backend/utility';
+import {saveData, getAllOfCollection, getData} from '../../Backend/utility';
 import moment from 'moment';
-import {_retrieveData} from '../../Backend/AsyncFuncs';
+import {_retrieveData, _storeData} from '../../Backend/AsyncFuncs';
 import firebase from '@react-native-firebase/app';
 
 class Home extends Component {
@@ -25,8 +25,21 @@ class Home extends Component {
 
   async componentDidMount() {
     this.setState({loading: true});
+
     this.userData = await _retrieveData('userData');
     this.userData = JSON.parse(this.userData);
+    console.log('current userData:', this.userData);
+    await firebase
+      .firestore()
+      .collection('Users')
+      .doc(this.userData.uuid)
+      .onSnapshot(async doc => {
+        console.log('user update:', doc.data());
+        // const userData = await getData('Users', this.userData.uid);
+        if (doc.data()) {
+          await _storeData('userData', JSON.stringify(doc.data()));
+        }
+      });
 
     await firebase
       .firestore()

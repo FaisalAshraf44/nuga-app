@@ -163,16 +163,47 @@ class Profile extends Component {
                   <View
                     style={[AppStyles.compContainer, {alignItems: 'center'}]}>
                     <View>
-                      <UserImage
-                        source={{
-                          uri: imageSource
-                            ? imageSource
-                            : user.profileImage
-                            ? user.profileImage
-                            : 'https://lh3.googleusercontent.com/proxy/3cUh1csEsvh_CReTfD4rW8bBklAwVdBzLkw_r_sqG9sFUAyd2NcKrydmiRc3bp59YQZcDXcwIACEordDp78i_o1iogBLDV6-OirJFBiUEgyct3RkomwFc2YM9l7-7z3e4cJAvNoplYMstw',
-                        }}
-                        size={totalSize(15)}
-                      />
+                      {imageSource || user.profileImage ? (
+                        <UserImage
+                          source={{
+                            uri: imageSource
+                              ? imageSource
+                              : user.profileImage
+                              ? user.profileImage
+                              : 'https://lh3.googleusercontent.com/proxy/3cUh1csEsvh_CReTfD4rW8bBklAwVdBzLkw_r_sqG9sFUAyd2NcKrydmiRc3bp59YQZcDXcwIACEordDp78i_o1iogBLDV6-OirJFBiUEgyct3RkomwFc2YM9l7-7z3e4cJAvNoplYMstw',
+                          }}
+                          size={totalSize(15)}
+                        />
+                      ) : (
+                        <TouchableOpacity
+                          onPress={() => image_picker(this.onAddImage)}
+                          activeOpacity={1}
+                          style={{
+                            alignSelf: 'center',
+                            width: totalSize(15),
+                            height: totalSize(15),
+                            borderWidth: 1,
+                            borderRadius: totalSize(15),
+                            borderColor: Colors.appColor1,
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                          }}>
+                          {/* <UserImage
+                          source={{
+                            uri: user.profileImage
+                              ? user.profileImage
+                              : 'https://lh3.googleusercontent.com/proxy/3cUh1csEsvh_CReTfD4rW8bBklAwVdBzLkw_r_sqG9sFUAyd2NcKrydmiRc3bp59YQZcDXcwIACEordDp78i_o1iogBLDV6-OirJFBiUEgyct3RkomwFc2YM9l7-7z3e4cJAvNoplYMstw',
+                          }}
+                        /> */}
+                          <Text
+                            style={{
+                              textAlign: 'center',
+                              color: Colors.appTextColor5,
+                            }}>
+                            Select image to upload
+                          </Text>
+                        </TouchableOpacity>
+                      )}
                       <TouchableOpacity
                         style={{position: 'absolute', top: -2.5, right: -2.5}}
                         onPress={() => image_picker(this.onAddImage)}>

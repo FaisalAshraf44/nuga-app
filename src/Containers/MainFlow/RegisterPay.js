@@ -151,8 +151,7 @@ class RegisterPay extends Component {
     const {event} = this.props.route.params;
 
     this.setState({loading: true});
-    let updatedParticipants = event.participants;
-    console.log('Participants:', updatedParticipants) ? event.participants : [];
+    let updatedParticipants = event.participants ? event.participants : [];
     let exists = false;
     let withdrawn = false;
     let registered = false;
@@ -160,6 +159,7 @@ class RegisterPay extends Component {
       if (element.userId == newParticipant.userId) {
         if (element.withdrawn == true) {
           element.withdrawn = false;
+          element.paid = true;
           exists = false;
           registered = true;
           withdrawn = true;
@@ -227,6 +227,11 @@ class RegisterPay extends Component {
                 marginTop: height(2.5),
                 marginBottom: height(2),
               }}
+              price={
+                this.userData && this.userData.membership == 'Paid'
+                  ? event.fee
+                  : event.guestfee
+              }
               image={event.image}
               title={event.name}
               location={event.location}
@@ -240,6 +245,7 @@ class RegisterPay extends Component {
               <InputWithIcon
                 title="Card Number"
                 //   value="John"
+                keyboardType="number-pad"
                 value={card_number}
                 onChangeText={text => {
                   this.setState({card_number: text});
@@ -254,6 +260,7 @@ class RegisterPay extends Component {
                 title="Expiry"
                 maxLength={5}
                 value={expiry}
+                keyboardType="number-pad"
                 onChangeText={text => {
                   if (text.length == 2) {
                     this.setState({expiry: text + '/'});
@@ -268,6 +275,7 @@ class RegisterPay extends Component {
               <Input
                 title="CVC"
                 //   value="John"
+                keyboardType="number-pad"
                 value={cvc}
                 onChangeText={text => {
                   this.setState({cvc: text});
@@ -282,7 +290,11 @@ class RegisterPay extends Component {
               loading={loading}
               // onPress={th}
               onPress={() => this.onSubmit()}
-              text="Register & Pay"
+              text={`Register & Pay (${
+                this.userData && this.userData.membership == 'Paid'
+                  ? event.fee
+                  : event.guestfee
+              } £)`}
               buttonStyle={{marginVertical: height(5)}}
             />
           </ScrollView>

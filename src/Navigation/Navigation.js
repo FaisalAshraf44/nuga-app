@@ -159,6 +159,11 @@ const ProfileStackScreens = () => {
         ),
       })}>
       <ProfileStack.Screen name="profile" component={Profile} />
+      <Stack.Screen
+        name="login"
+        component={Login}
+        options={{headerShown: false}}
+      />
     </ProfileStack.Navigator>
   );
 };
@@ -220,23 +225,25 @@ const CustomDrawerContent = props => {
                             </View> */}
                   </View>
                   <View style={[AppStyles.compContainer]}>
-                    <TouchableOpacity
-                      onPress={() => props.navigation.navigate('Profile')}
-                      activeOpacity={1}
-                      style={{
-                        alignSelf: 'center',
-                        borderWidth: 5,
-                        borderRadius: 100,
-                        borderColor: Colors.appBgColor1,
-                      }}>
-                      <UserImage
-                        source={{
-                          uri: user.profileImage
-                            ? user.profileImage
-                            : 'https://lh3.googleusercontent.com/proxy/3cUh1csEsvh_CReTfD4rW8bBklAwVdBzLkw_r_sqG9sFUAyd2NcKrydmiRc3bp59YQZcDXcwIACEordDp78i_o1iogBLDV6-OirJFBiUEgyct3RkomwFc2YM9l7-7z3e4cJAvNoplYMstw',
-                        }}
-                      />
-                    </TouchableOpacity>
+                    {user && user.profileImage ? (
+                      <TouchableOpacity
+                        onPress={() => props.navigation.navigate('Profile')}
+                        activeOpacity={1}
+                        style={{
+                          alignSelf: 'center',
+                          borderWidth: 5,
+                          borderRadius: 100,
+                          borderColor: Colors.appBgColor1,
+                        }}>
+                        <UserImage
+                          source={{
+                            uri: user.profileImage
+                              ? user.profileImage
+                              : 'https://lh3.googleusercontent.com/proxy/3cUh1csEsvh_CReTfD4rW8bBklAwVdBzLkw_r_sqG9sFUAyd2NcKrydmiRc3bp59YQZcDXcwIACEordDp78i_o1iogBLDV6-OirJFBiUEgyct3RkomwFc2YM9l7-7z3e4cJAvNoplYMstw',
+                          }}
+                        />
+                      </TouchableOpacity>
+                    ) : null}
                     <View
                       style={[
                         AppStyles.rowView,
@@ -345,7 +352,10 @@ const CustomDrawerContent = props => {
                       {
                         text: 'Yes',
                         onPress: async () => {
-                          await AsyncStorage.clear();
+                          // await AsyncStorage.clear();
+                          await AsyncStorage.removeItem('Token');
+                          await AsyncStorage.removeItem('userData');
+
                           await firebase.auth().signOut();
                           globalContext && globalContext.setUserData({});
                           // RNRestart.Restart();

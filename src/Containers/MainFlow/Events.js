@@ -10,7 +10,7 @@ import {
   updateEventParticipants,
 } from '../../Backend/utility';
 import moment from 'moment';
-import {_retrieveData} from '../../Backend/AsyncFuncs';
+import {_retrieveData, _storeData} from '../../Backend/AsyncFuncs';
 import Toast from 'react-native-simple-toast';
 import firebase from '@react-native-firebase/app';
 
@@ -31,6 +31,46 @@ export default class Events extends Component {
     this.setState({loading: true});
     this.userData = await _retrieveData('userData');
     this.userData = JSON.parse(this.userData);
+
+    await firebase
+      .firestore()
+      .collection('Users')
+      .doc(this.userData.uuid)
+      .onSnapshot(async doc => {
+        console.log('user update on event details:', doc.data());
+        // const userData = await getData('Users', this.userData.uid);
+        if (doc.data()) {
+          await _storeData('userData', JSON.stringify(doc.data()));
+          this.userData = doc.data();
+          this.loadAllData();
+        }
+      });
+    this.loadAllData();
+
+    // await firebase
+    //   .firestore()
+    //   .collection('Events')
+    //   .onSnapshot(async doc => {
+    //     const events = await getAllOfCollection('Events');
+
+    //     const upcomming_events = events.filter(element => {
+    //       let date = moment(new Date(element.date.seconds * 1000));
+    //       let curentDate = new Date();
+    //       return date.diff(curentDate, 'days') > 0 && element.status == true;
+    //     });
+
+    //     const past_events = events.filter(element => {
+    //       let date = moment(new Date(element.date.seconds * 1000));
+    //       let curentDate = new Date();
+    //       return date.diff(curentDate) < 0 || !element.status;
+    //     });
+
+    //     this.setState({loading: false, events, upcomming_events, past_events});
+    //   });
+    // console.log('Events:', events);
+  }
+
+  loadAllData = async () => {
     await firebase
       .firestore()
       .collection('Events')
@@ -51,8 +91,11 @@ export default class Events extends Component {
 
         this.setState({loading: false, events, upcomming_events, past_events});
       });
-    console.log('Events:', events);
-  }
+  };
+
+  goBackLoad = () => {
+    // this.loadAllData();
+  };
 
   registerParticiapnts = (event, newParticipant) => {
     this.setState({registerLoading: true});
@@ -92,6 +135,26 @@ export default class Events extends Component {
         });
     } else {
       Toast.show('You are already registered in this event');
+    }
+  };
+
+  registerAndPay = (newParticipant, event) => {
+    console.log('======event===: ', event);
+    let updatedParticipants = event.participants;
+    let registeredAndPaid = false;
+    updatedParticipants.forEach(element => {
+      if (element.userId == newParticipant.userId) {
+        if (element.paid && !element.withdrawn) {
+          Toast.show('You have already Registered and Paid.');
+          registeredAndPaid = true;
+        }
+      }
+    });
+    if (!registeredAndPaid) {
+      this.props.navigation.navigate('registerPay', {
+        event,
+        load: this.goBackLoad,
+      });
     }
   };
 
@@ -141,9 +204,21 @@ export default class Events extends Component {
                   this.registerParticiapnts(item, newParticipant)
                 }
                 registerLoading={this.state.registerLoading}
-                payOnPress={() =>
-                  Toast.show('This feature is not available yet')
-                }
+                // payOnPress={() =>
+                //   Toast.show('This feature is not available yet')
+                // }
+
+                payOnPress={() => {
+                  if (item.entry) {
+                    let newParticipant = {};
+                    newParticipant.userId = this.userData.uuid;
+                    newParticipant.paid = false;
+                    newParticipant.withdrawn = false;
+                    this.registerAndPay(newParticipant, item);
+                  } else {
+                    Toast.show('Event Entry is closed');
+                  }
+                }}
               />
             );
           }}
