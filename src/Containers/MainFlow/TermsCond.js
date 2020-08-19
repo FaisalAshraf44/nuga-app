@@ -12,6 +12,19 @@ import {getData} from '../../Backend/utility';
 import HTML from 'react-native-render-html';
 import firebase from '@react-native-firebase/app';
 
+const styles = {
+  h: {
+    textAlign: 'justify',
+  },
+  p: {
+    marginTop: 24,
+    textAlign: 'justify',
+  },
+  li: {
+    textAlign: 'justify',
+  },
+};
+
 class TermsCond extends Component {
   constructor(props) {
     super(props);
@@ -50,6 +63,7 @@ class TermsCond extends Component {
                 html={terms.termsOfService}
                 imagesMaxWidth={Dimensions.get('window').width}
                 onLinkPress={(event, href) => Linking.openURL(href)}
+                tagsStyles={styles}
               />
             )}
           </View>

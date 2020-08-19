@@ -64,8 +64,8 @@ class EventDetail extends Component {
         }
       });
 
-    console.log('details page userData:', this.userData);
-    this.loadAllData();
+    // console.log('details page userData:', this.userData);
+    // this.loadAllData();
   }
 
   loadAllData = async () => {
@@ -114,6 +114,10 @@ class EventDetail extends Component {
           Toast.show('You have already Registered and Paid.');
           registeredAndPaid = true;
         }
+        if (element.paid && element.withdrawn) {
+          registeredAndPaid = true;
+          this.saveParticiapnts(newParticipant);
+        }
       }
     });
     if (!registeredAndPaid) {
@@ -149,14 +153,7 @@ class EventDetail extends Component {
       updatedParticipants.push(newParticipant);
     }
 
-    // updatedParticipants.forEach(element => {
-    //   if (element.userId == newParticipant.userId) {
-    //     exists = true;
-    //   }
-    // });
-
     if (!exists) {
-      // updatedParticipants.push(newParticipant);
       updateEventParticipants(this.props.route.params.id, updatedParticipants)
         .then(response => {
           this.setState({
@@ -439,7 +436,7 @@ class EventDetail extends Component {
                       ? 'Registered & Paid'
                       : found && found.withdrawn
                       ? 'Withdrawn'
-                      : 'Registered'
+                      : 'Registered (NOT PAID)'
                     : 'Not Registered'}
                 </Text>
               </View>

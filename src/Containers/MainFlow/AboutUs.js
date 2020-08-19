@@ -14,6 +14,16 @@ import HTML from 'react-native-render-html';
 import {getData} from '../../Backend/utility';
 import firebase from '@react-native-firebase/app';
 
+const styles = {
+  p: {
+    marginTop: 24,
+    textAlign: 'justify',
+  },
+  li: {
+    textAlign: 'justify',
+  },
+};
+
 class AboutUs extends Component {
   constructor(props) {
     super(props);
@@ -33,7 +43,6 @@ class AboutUs extends Component {
       .onSnapshot(async doc => {
         const about = await getData('About', '1');
         this.setState({about, loading: false});
-        console.log('About :', about);
       });
   }
 
@@ -55,6 +64,7 @@ class AboutUs extends Component {
                 html={about.about}
                 imagesMaxWidth={Dimensions.get('window').width}
                 onLinkPress={(event, href) => Linking.openURL(href)}
+                tagsStyles={styles}
               />
             )}
           </View>

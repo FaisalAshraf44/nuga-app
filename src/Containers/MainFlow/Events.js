@@ -148,6 +148,10 @@ export default class Events extends Component {
           Toast.show('You have already Registered and Paid.');
           registeredAndPaid = true;
         }
+        if (element.paid && element.withdrawn) {
+          registeredAndPaid = true;
+          this.registerParticiapnts(event, newParticipant);
+        }
       }
     });
     if (!registeredAndPaid) {

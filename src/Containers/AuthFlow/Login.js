@@ -27,6 +27,16 @@ import firebase from '@react-native-firebase/app';
 
 let globalContext = null;
 
+const styles = {
+  p: {
+    marginTop: 24,
+    textAlign: 'justify',
+  },
+  li: {
+    textAlign: 'justify',
+  },
+};
+
 class Login extends Component {
   constructor(props) {
     super(props);
@@ -106,21 +116,43 @@ class Login extends Component {
       isTermsModal: !this.state.isTermsModal,
     });
 
+  validateForgotPassEmail = async () => {
+    let regex1 = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+    if (regex1.test(this.state.forgotPasswordEmail) === false) {
+      // console.log("Email is Not Correct");
+      this.state.forgotPasswordEmail !== undefined &&
+      this.state.forgotPasswordEmail !== ''
+        ? Toast.show('The email is badly formatted')
+        : Toast.show('The email cannot be empty');
+
+      return 1;
+    }
+    return 0;
+  };
+
   onDoneForgotPassword = async () => {
-    this.setState({loading: true});
-    await auth()
-      .sendPasswordResetEmail(this.state.forgotPasswordEmail)
-      .then(async a => {
-        Toast.show('Password reset email sent');
-        this.setState({loading: false});
+    const {forgotPasswordEmail} = this.state;
+    let emailCheck = await this.validateForgotPassEmail();
 
-        this.toggleForgotPasswordModal();
-      })
-      .catch(e => {
-        this.setState({loading: false});
+    if (emailCheck == 0) {
+      this.setState({loading: true});
 
-        console.log('This is error of email :: ', e);
-      });
+      await auth()
+        .sendPasswordResetEmail(forgotPasswordEmail)
+        .then(async a => {
+          Toast.show('Password reset email sent');
+          this.setState({loading: false});
+
+          this.toggleForgotPasswordModal();
+        })
+        .catch(e => {
+          this.setState({loading: false});
+
+          console.log('This is error of email :: ', e);
+        });
+    } else {
+      this.setState({loading: false});
+    }
 
     // this.toggleResetPasswordModal();
   };
@@ -710,7 +742,7 @@ class Login extends Component {
                         marginVertical: 24,
                         marginHorizontal: 16,
                         paddingVertical: 16,
-                        paddingHorizontal: 8,
+                        paddingHorizontal: 16,
                       },
                       AppStyles.shadow,
                     ]}>
@@ -730,6 +762,7 @@ class Login extends Component {
                         <HTML
                           html={terms.termsOfService}
                           imagesMaxWidth={Dimensions.get('window').width}
+                          tagsStyles={styles}
                         />
                       </ScrollView>
                     )}

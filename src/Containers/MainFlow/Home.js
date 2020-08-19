@@ -97,6 +97,7 @@ class Home extends Component {
                   AppStyles.textMedium,
                   AppStyles.textGray,
                   FontSize.small,
+                  {textAlign: 'justify'},
                 ]}>
                 NUGA is an organisation of UK resident Nigerians (including
                 non-Nigerian friends, associates and affiliates) who play golf,
@@ -107,6 +108,7 @@ class Home extends Component {
                   AppStyles.textMedium,
                   AppStyles.textGray,
                   FontSize.medium,
+                  {textAlign: 'justify'},
                 ]}>
                 Members have a deep passion for the game of golf as they do for
                 supporting charity, good causes and strong family values.
