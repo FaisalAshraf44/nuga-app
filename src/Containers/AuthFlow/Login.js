@@ -11,6 +11,8 @@ import {
   BackHandler,
   TouchableOpacity,
   Dimensions,
+  Platform,
+  KeyboardAvoidingView,
 } from 'react-native';
 import {AppStyles, Images, Colors} from '../../Themes';
 import LinearGradient from 'react-native-linear-gradient';
@@ -438,152 +440,163 @@ class Login extends Component {
                     />
                     {selected_screen_index === 0 ? (
                       <View>
-                        <InputWithIcon
-                          keyboardType="email-address"
-                          value={this.state.email}
-                          onChangeText={e => {
-                            console.log(e);
-                            this.setState({
-                              email: e,
-                              showWarning: false,
-                            });
-                          }}
-                          iconName="email"
-                          placeholder="Email"
-                        />
-                        <InputWithIcon
-                          iconName="lock"
-                          placeholder="Password"
-                          secureTextEntry={true}
-                          value={this.state.password}
-                          onChangeText={e => {
-                            this.setState({
-                              password: e,
-                              showWarning: false,
-                            });
-                          }}
-                          containerStyle={{marginTop: height(2.5)}}
-                        />
-                        <View
-                          style={[
-                            AppStyles.compContainer,
-                            {marginVertical: height(1)},
-                          ]}>
-                          <Text
-                            onPress={this.toggleForgotPasswordModal}
+                        <KeyboardAvoidingView
+                          behavior={
+                            Platform.OS === 'ios' ? 'padding' : 'height'
+                          }>
+                          <InputWithIcon
+                            keyboardType="email-address"
+                            value={this.state.email}
+                            onChangeText={e => {
+                              console.log(e);
+                              this.setState({
+                                email: e,
+                                showWarning: false,
+                              });
+                            }}
+                            iconName="email"
+                            placeholder="Email"
+                          />
+                          <InputWithIcon
+                            iconName="lock"
+                            placeholder="Password"
+                            secureTextEntry={true}
+                            value={this.state.password}
+                            onChangeText={e => {
+                              this.setState({
+                                password: e,
+                                showWarning: false,
+                              });
+                            }}
+                            containerStyle={{marginTop: height(2.5)}}
+                          />
+                          <View
                             style={[
-                              AppStyles.textRegular,
-                              AppStyles.textGreen,
-                              {
-                                textAlign: 'right',
-                                textDecorationLine: 'underline',
-                              },
+                              AppStyles.compContainer,
+                              {marginVertical: height(1)},
                             ]}>
-                            Forgot Password
-                          </Text>
-                        </View>
-                        <ButtonColored
-                          text="LOGIN"
-                          buttonStyle={{marginVertical: height(5)}}
-                          onPress={() => {
-                            this.validationHelper();
-                          }}
-                        />
+                            <Text
+                              onPress={this.toggleForgotPasswordModal}
+                              style={[
+                                AppStyles.textRegular,
+                                AppStyles.textGreen,
+                                {
+                                  textAlign: 'right',
+                                  textDecorationLine: 'underline',
+                                },
+                              ]}>
+                              Forgot Password
+                            </Text>
+                          </View>
+                          <ButtonColored
+                            text="LOGIN"
+                            buttonStyle={{marginVertical: height(5)}}
+                            onPress={() => {
+                              this.validationHelper();
+                            }}
+                          />
+                        </KeyboardAvoidingView>
                       </View>
                     ) : (
                       <View>
-                        {true == false ? (
+                        <KeyboardAvoidingView
+                          behavior={
+                            Platform.OS === 'ios' ? 'padding' : 'height'
+                          }>
+                          {true == false && Platform.OS == 'android' ? (
+                            <InputWithIcon
+                              iconName="account-circle"
+                              keyboardType="default"
+                            />
+                          ) : null}
                           <InputWithIcon
                             iconName="account-circle"
+                            placeholder="First Name"
                             keyboardType="default"
+                            secureTextEntry={false}
+                            value={this.state.fname}
+                            onChangeText={e => {
+                              this.setState({
+                                fname: e,
+                                showWarning: false,
+                              });
+                            }}
                           />
-                        ) : null}
-                        <InputWithIcon
-                          iconName="account-circle"
-                          placeholder="First Name"
-                          keyboardType="default"
-                          secureTextEntry={false}
-                          value={this.state.fname}
-                          onChangeText={e => {
-                            this.setState({
-                              fname: e,
-                              showWarning: false,
-                            });
-                          }}
-                        />
-                        <InputWithIcon
-                          iconName="account-circle-outline"
-                          placeholder="Last Name"
-                          value={this.state.lname}
-                          secureTextEntry={false}
-                          onChangeText={e => {
-                            this.setState({
-                              lname: e,
-                              showWarning: false,
-                            });
-                          }}
-                          containerStyle={{marginTop: height(2)}}
-                        />
-                        <InputWithIcon
-                          iconName="email"
-                          placeholder="Email"
-                          keyboardType="email-address"
-                          value={this.state.email2}
-                          onChangeText={e => {
-                            this.setState({
-                              email2: e,
-                              showWarning: false,
-                            });
-                          }}
-                          containerStyle={{marginTop: height(2)}}
-                        />
-                        <InputWithIcon
-                          iconName="lock"
-                          placeholder="Password"
-                          value={this.state.password2}
-                          secureTextEntry={true}
-                          onChangeText={e => {
-                            this.setState({
-                              password2: e,
-                              showWarning: false,
-                            });
-                          }}
-                          containerStyle={{marginTop: height(2)}}
-                        />
-                        <TouchableOpacity
-                          onPress={this.toggleTermsModal}
-                          activeOpacity={0.5}
-                          style={[
-                            AppStyles.compContainer,
-                            {marginVertical: height(1.5)},
-                          ]}>
-                          <Text
+                          <InputWithIcon
+                            iconName="account-circle-outline"
+                            placeholder="Last Name"
+                            keyboardType="default"
+                            value={this.state.lname}
+                            secureTextEntry={false}
+                            onChangeText={e => {
+                              this.setState({
+                                lname: e,
+                                showWarning: false,
+                              });
+                            }}
+                            containerStyle={{marginTop: height(2)}}
+                          />
+                          <InputWithIcon
+                            iconName="email"
+                            placeholder="Email"
+                            keyboardType="email-address"
+                            value={this.state.email2}
+                            onChangeText={e => {
+                              this.setState({
+                                email2: e,
+                                showWarning: false,
+                              });
+                            }}
+                            containerStyle={{marginTop: height(2)}}
+                          />
+                          <InputWithIcon
+                            iconName="lock"
+                            placeholder="Password"
+                            value={this.state.password2}
+                            secureTextEntry={true}
+                            onChangeText={e => {
+                              this.setState({
+                                password2: e,
+                                showWarning: false,
+                              });
+                            }}
+                            containerStyle={{marginTop: height(2)}}
+                          />
+                          <TouchableOpacity
+                            onPress={this.toggleTermsModal}
+                            activeOpacity={0.5}
                             style={[
-                              AppStyles.textRegular,
-                              AppStyles.textWhite,
-                              AppStyles.textCenter,
-                              // {textDecorationLine: 'underline'},
+                              AppStyles.compContainer,
+                              {marginVertical: height(1.5)},
                             ]}>
-                            By creating an account, you agree to our{' '}
                             <Text
                               style={[
                                 AppStyles.textRegular,
                                 AppStyles.textWhite,
                                 AppStyles.textCenter,
-                                {textDecorationLine: 'underline'},
+                                // {textDecorationLine: 'underline'},
                               ]}>
-                              Terms and Conditions
+                              By creating an account, you agree to our{' '}
+                              <Text
+                                style={[
+                                  AppStyles.textRegular,
+                                  AppStyles.textWhite,
+                                  AppStyles.textCenter,
+                                  {textDecorationLine: 'underline'},
+                                ]}>
+                                Terms and Conditions
+                              </Text>
                             </Text>
-                          </Text>
-                        </TouchableOpacity>
+                          </TouchableOpacity>
 
-                        <ButtonColored
-                          onPress={() => {
-                            this.signupValidationHelper();
-                          }}
-                          text="CREATE ACCOUNT"
-                          buttonStyle={{marginVertical: height(2.5)}}
-                        />
+                          <ButtonColored
+                            onPress={() => {
+                              this.signupValidationHelper();
+                            }}
+                            text="CREATE ACCOUNT"
+                            buttonStyle={{marginVertical: height(2.5)}}
+                          />
+                        </KeyboardAvoidingView>
                       </View>
                     )}
                   </View>

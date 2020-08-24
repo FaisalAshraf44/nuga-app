@@ -381,7 +381,7 @@ const CustomDrawerContent = props => {
                           // RNRestart.Restart();
 
                           // props.navigation.navigate('login');
-                          props.navigation.navigate('Auth');
+                          props.navigation.navigate('login');
                         },
                       },
                       {
@@ -533,6 +533,7 @@ const AppStackScreens = () => {
         component={EventDetail}
         options={({navigation, route}) => ({
           title: 'Event Detail',
+          headerBackTitleVisible: false,
           headerTitleAlign: 'center',
           headerTitleStyle: AppStyles.headerTitleStyle,
           headerStyle: AppStyles.headerStyle,
@@ -545,6 +546,7 @@ const AppStackScreens = () => {
         options={({navigation, route}) => ({
           title: 'Register & Pay',
           headerTitleAlign: 'center',
+          headerBackTitleVisible: false,
           headerTitleStyle: AppStyles.headerTitleStyle,
           headerStyle: AppStyles.headerStyle,
           headerTintColor: Colors.appTextColor6,

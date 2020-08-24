@@ -168,7 +168,7 @@ export default StyleSheet.create({
     elevation: 5,
   },
   shadow: {
-    shadowOffset: {width: 10, height: 10},
+    shadowOffset: {width: 3, height: 3},
     shadowColor: 'black',
     shadowOpacity: 0.25,
     elevation: 5,

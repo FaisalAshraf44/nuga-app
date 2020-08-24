@@ -81,7 +81,12 @@ class Home extends Component {
             <View
               style={[
                 AppStyles.cardView,
-                {padding: 16, marginTop: height(2.5)},
+                AppStyles.shadow,
+                {
+                  marginTop: height(2.5),
+                  paddingVertical: 16,
+                  paddingHorizontal: 8,
+                },
               ]}>
               <Text
                 style={[
