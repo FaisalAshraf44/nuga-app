@@ -11,6 +11,7 @@
 		025217F2AE454205B2B43A4C /* SimpleLineIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5A39D66F2E5A4C568025A9D7 /* SimpleLineIcons.ttf */; };
 		0286E5E577591AA27C577A8F /* libPods-Nuga-NugaTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 7A0E6685ADFE41EBEDE71971 /* libPods-Nuga-NugaTests.a */; };
 		0418BD8D24E8411A00FA0688 /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0418BD8C24E8411A00FA0688 /* File.swift */; };
+		04AFCF2524EEF08000319D0A /* UserNotifications.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 04AFCF2424EEF08000319D0A /* UserNotifications.framework */; };
 		1255AD304E134573954BF0A5 /* Roboto-Medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C47D653A8DE942AEBEF0AC37 /* Roboto-Medium.ttf */; };
 		13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.m */; };
 		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
@@ -86,6 +87,8 @@
 		0418BD7D24E8352300FA0688 /* BVLinearGradient.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = BVLinearGradient.xcodeproj; path = "../node_modules/react-native-linear-gradient/BVLinearGradient.xcodeproj"; sourceTree = "<group>"; };
 		0418BD8B24E8411A00FA0688 /* Nuga-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Nuga-Bridging-Header.h"; sourceTree = "<group>"; };
 		0418BD8C24E8411A00FA0688 /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
+		04AFCF2124EEEABF00319D0A /* Nuga.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = Nuga.entitlements; path = Nuga/Nuga.entitlements; sourceTree = "<group>"; };
+		04AFCF2424EEF08000319D0A /* UserNotifications.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = UserNotifications.framework; path = System/Library/Frameworks/UserNotifications.framework; sourceTree = SDKROOT; };
 		05FBCF7039E84050A3F2EA98 /* FontAwesome5_Solid.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Solid.ttf; path = "../node_modules/react-native-vector-icons/Fonts/FontAwesome5_Solid.ttf"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* Nuga.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Nuga.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = Nuga/AppDelegate.h; sourceTree = "<group>"; };
@@ -148,6 +151,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				04AFCF2524EEF08000319D0A /* UserNotifications.framework in Frameworks */,
 				342CDB35244F1C1D755D0616 /* libPods-Nuga.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -230,6 +234,7 @@
 		13B07FAE1A68108700A75B9A /* Nuga */ = {
 			isa = PBXGroup;
 			children = (
+				04AFCF2124EEEABF00319D0A /* Nuga.entitlements */,
 				008F07F21AC5B25A0029DE68 /* main.jsbundle */,
 				CE96E10E24A278C1003AFF3C /* GoogleService-Info.plist */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
@@ -245,6 +250,7 @@
 		2D16E6871FA4F8E400B85C8A /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				04AFCF2424EEF08000319D0A /* UserNotifications.framework */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
 				BF21A1842ECBAB3F9D3029A0 /* libPods-Nuga.a */,
@@ -404,7 +410,7 @@
 						TestTargetID = 13B07F861A680F5B00A75B9A;
 					};
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = 3J4TV452UM;
+						DevelopmentTeam = F9YUNSPLA8;
 						LastSwiftMigration = 1160;
 					};
 					2D02E47A1E0B4A5D006451C7 = {
@@ -903,8 +909,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_CXX_LIBRARY = "libstdc++";
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Nuga/Nuga.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 3J4TV452UM;
+				DEVELOPMENT_TEAM = F9YUNSPLA8;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -919,7 +926,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.Nuga;
 				PRODUCT_NAME = Nuga;
 				SWIFT_OBJC_BRIDGING_HEADER = "Nuga-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -935,8 +942,9 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_CXX_LIBRARY = "libstdc++";
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_ENTITLEMENTS = Nuga/Nuga.entitlements;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 3J4TV452UM;
+				DEVELOPMENT_TEAM = F9YUNSPLA8;
 				INFOPLIST_FILE = Nuga/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 9.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -946,7 +954,7 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = "org.reactjs.native.example.$(PRODUCT_NAME:rfc1034identifier)";
+				PRODUCT_BUNDLE_IDENTIFIER = com.Nuga;
 				PRODUCT_NAME = Nuga;
 				SWIFT_OBJC_BRIDGING_HEADER = "Nuga-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;

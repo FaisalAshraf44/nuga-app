@@ -33,8 +33,8 @@ import {width, height, totalSize} from 'react-native-dimension';
 import {Icon} from 'react-native-elements';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import AsyncStorage from '@react-native-community/async-storage';
-import {getData} from '../Backend/utility';
-import {_storeData} from '../Backend/AsyncFuncs';
+import {getData, updateField} from '../Backend/utility';
+import {_storeData, _retrieveData} from '../Backend/AsyncFuncs';
 import firebase from '@react-native-firebase/app';
 import RNRestart from 'react-native-restart';
 
@@ -570,6 +570,10 @@ function Navigation() {
     const Token = await AsyncStorage.getItem('Token');
     if (Token) {
       const userData = await getData('Users', Token);
+
+      const fcmToken = await _retrieveData('fcmToken');
+      const updateFcm = updateField('Users', userData.uuid, {fcmToken});
+
       globalContext && globalContext.setUserData(userData);
       await _storeData('userData', JSON.stringify(userData));
       setLoggedIn(true);

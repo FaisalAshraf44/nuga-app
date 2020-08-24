@@ -19,7 +19,7 @@ import {totalSize, width, height} from 'react-native-dimension';
 import {ButtonGroup, Icon} from 'react-native-elements';
 import auth from '@react-native-firebase/auth';
 import {_storeData, _retrieveData} from '../../Backend/AsyncFuncs';
-import {saveData, getData} from '../../Backend/utility';
+import {saveData, getData, updateField} from '../../Backend/utility';
 import {RootConsumer} from '../../Backend/Context';
 import Toast from 'react-native-simple-toast';
 import HTML from 'react-native-render-html';
@@ -288,6 +288,8 @@ class Login extends Component {
       .signInWithEmailAndPassword(this.state.email, this.state.password)
       .then(async user => {
         await _storeData('Token', user.user.uid);
+        const fcmToken = await _retrieveData('fcmToken');
+        const updateFcm = updateField('Users', user.user.uid, {fcmToken});
         const userData = await getData('Users', user.user.uid);
         globalContext.setUserData(userData);
         await _storeData('userData', JSON.stringify(userData));
@@ -500,6 +502,7 @@ class Login extends Component {
                           iconName="account-circle"
                           placeholder="First Name"
                           keyboardType="default"
+                          secureTextEntry={false}
                           value={this.state.fname}
                           onChangeText={e => {
                             this.setState({
@@ -512,6 +515,7 @@ class Login extends Component {
                           iconName="account-circle-outline"
                           placeholder="Last Name"
                           value={this.state.lname}
+                          secureTextEntry={false}
                           onChangeText={e => {
                             this.setState({
                               lname: e,

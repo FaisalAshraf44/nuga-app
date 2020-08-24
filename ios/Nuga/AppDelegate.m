@@ -1,5 +1,9 @@
 #import "AppDelegate.h"
 
+#import <UserNotifications/UserNotifications.h>
+#import <RNCPushNotificationIOS.h>
+
+
 #import <React/RCTBridge.h>
 #import <React/RCTBundleURLProvider.h>
 #import <React/RCTRootView.h>
@@ -25,6 +29,8 @@ static void InitializeFlipper(UIApplication *application) {
   [client start];
 }
 #endif
+
+
 
 @implementation AppDelegate
 
@@ -54,8 +60,12 @@ static void InitializeFlipper(UIApplication *application) {
   UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
   center.delegate = self;
   
+  
+  
   return YES;
 }
+
+
 
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
 {
