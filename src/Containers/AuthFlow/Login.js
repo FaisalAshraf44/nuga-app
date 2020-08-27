@@ -504,16 +504,17 @@ class Login extends Component {
                           behavior={
                             Platform.OS === 'ios' ? 'padding' : 'height'
                           }>
-                          {true == false && Platform.OS == 'android' ? (
+                          {true == false ? (
                             <InputWithIcon
                               iconName="account-circle"
-                              keyboardType="default"
+                              keyboardType="numeric"
                             />
                           ) : null}
                           <InputWithIcon
                             iconName="account-circle"
                             placeholder="First Name"
                             keyboardType="default"
+                            autoCapitalize="words"
                             secureTextEntry={false}
                             value={this.state.fname}
                             onChangeText={e => {
@@ -526,7 +527,7 @@ class Login extends Component {
                           <InputWithIcon
                             iconName="account-circle-outline"
                             placeholder="Last Name"
-                            keyboardType="default"
+                            // keyboardType="default"
                             value={this.state.lname}
                             secureTextEntry={false}
                             onChangeText={e => {

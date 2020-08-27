@@ -25,7 +25,7 @@ class InputWithIcon extends Component {
       title,
       inputRight,
       inputContainerStyle,
-      keyboardType,
+      ...rest
     } = this.props;
     return (
       <View style={[{justifyContent: 'center'}, containerStyle]}>
@@ -46,7 +46,8 @@ class InputWithIcon extends Component {
           </View>
           <View style={{flex: 8.5}}>
             <TextInput
-              keyboardType={keyboardType ? keyboardType : 'default'}
+              // keyboardType={keyboardType ? keyboardType : 'default'}
+              {...rest}
               onChangeText={onChangeText}
               value={value}
               editable={editable}
