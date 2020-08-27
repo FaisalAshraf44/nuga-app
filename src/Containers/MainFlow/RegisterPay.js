@@ -26,6 +26,7 @@ import {
 import moment from 'moment';
 import {_retrieveData} from '../../Backend/AsyncFuncs';
 import firebase from '@react-native-firebase/app';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 class RegisterPay extends Component {
   constructor(props) {
@@ -219,7 +220,7 @@ class RegisterPay extends Component {
   render() {
     // const {events} = this.state;
     const {event} = this.props.route.params;
-    console.log('======:', this.props.route);
+    // console.log('======:', this.props.route);
     const {navigate} = this.props.navigation;
     const {card_number, buttonLoading, loading, expiry, cvc} = this.state;
     const keyboardVerticalOffset = Platform.OS === 'ios' ? 40 : -100;
@@ -229,7 +230,7 @@ class RegisterPay extends Component {
         <KeyboardAvoidingView
           behavior={Platform.OS === 'ios' ? 'padding' : 'position'}
           keyboardVerticalOffset={keyboardVerticalOffset}>
-          <ScrollView>
+          <KeyboardAwareScrollView>
             {/* <this.renderEvents
           data={events}
           onPress={item =>
@@ -309,14 +310,14 @@ class RegisterPay extends Component {
               loading={loading}
               // onPress={th}
               onPress={() => this.onSubmit()}
-              text={`Register & Pay (${
+              text={`Register & Pay (£ ${
                 this.userData && this.userData.membership == 'Paid'
                   ? event.fee
                   : event.guestfee
-              } £)`}
+              })`}
               buttonStyle={{marginVertical: height(5)}}
             />
-          </ScrollView>
+          </KeyboardAwareScrollView>
         </KeyboardAvoidingView>
       </View>
     );

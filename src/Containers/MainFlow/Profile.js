@@ -12,6 +12,7 @@ import {UserImage, InputWithIcon, ButtonColored} from '../../Components';
 import {Icon, ButtonGroup} from 'react-native-elements';
 import {totalSize, height, width} from 'react-native-dimension';
 import {RootConsumer} from '../../Backend/Context';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 import {
   getData,
@@ -159,7 +160,7 @@ class Profile extends Component {
                   <ActivityIndicator size="large" color="#00ff00" />
                 </View>
               ) : (
-                <ScrollView>
+                <KeyboardAwareScrollView>
                   <View
                     style={[AppStyles.compContainer, {alignItems: 'center'}]}>
                     <View>
@@ -307,6 +308,7 @@ class Profile extends Component {
                   <InputWithIcon
                     title="Telephone"
                     //   value="+448182181821"
+                    keyboardType="phone-pad"
                     value={user.phone}
                     onChangeText={text => {
                       let user = this.state.user;
@@ -356,6 +358,7 @@ class Profile extends Component {
                   <InputWithIcon
                     title="Handicap"
                     //   value="14"
+                    keyboardType="number-pad"
                     value={user.handicap}
                     onChangeText={text => {
                       let user = this.state.user;
@@ -394,7 +397,7 @@ class Profile extends Component {
                     text="Update Profile"
                     buttonStyle={{marginVertical: height(5)}}
                   />
-                </ScrollView>
+                </KeyboardAwareScrollView>
               )}
             </View>
           );

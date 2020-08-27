@@ -26,6 +26,7 @@ import {RootConsumer} from '../../Backend/Context';
 import Toast from 'react-native-simple-toast';
 import HTML from 'react-native-render-html';
 import firebase from '@react-native-firebase/app';
+import {KeyboardAwareScrollView} from 'react-native-keyboard-aware-scroll-view';
 
 let globalContext = null;
 
@@ -401,7 +402,7 @@ class Login extends Component {
                 colors={Colors.appGradiantColors1}
                 locations={[0.25, 1]}
                 style={{flex: 1}}>
-                <ScrollView>
+                <KeyboardAwareScrollView>
                   <View style={{flex: 1}}>
                     <View style={[AppStyles.compContainer, AppStyles.center]}>
                       <Logo size={totalSize(15)} />
@@ -600,7 +601,7 @@ class Login extends Component {
                       </View>
                     )}
                   </View>
-                </ScrollView>
+                </KeyboardAwareScrollView>
               </LinearGradient>
               <Modal
                 visible={isForgotPasswordModalVisible}
@@ -618,7 +619,7 @@ class Login extends Component {
                       },
                       AppStyles.shadow,
                     ]}>
-                    <ScrollView>
+                    <KeyboardAwareScrollView>
                       <View style={AppStyles.compContainer}>
                         <Text
                           style={[
@@ -667,7 +668,7 @@ class Login extends Component {
                           onPress={this.toggleForgotPasswordModal}
                         />
                       </View>
-                    </ScrollView>
+                    </KeyboardAwareScrollView>
                   </View>
                 </View>
               </Modal>
@@ -687,7 +688,7 @@ class Login extends Component {
                       },
                       AppStyles.shadow,
                     ]}>
-                    <ScrollView>
+                    <KeyboardAwareScrollView>
                       <View style={AppStyles.compContainer}>
                         <Text
                           style={[
@@ -740,7 +741,7 @@ class Login extends Component {
                           onPress={this.toggleResetPasswordModal}
                         />
                       </View>
-                    </ScrollView>
+                    </KeyboardAwareScrollView>
                   </View>
                 </View>
               </Modal>
@@ -756,7 +757,7 @@ class Login extends Component {
                         flex: 8,
                         backgroundColor: Colors.appBgColor1,
                         borderRadius: 25,
-                        marginVertical: 24,
+                        marginVertical: 32,
                         marginHorizontal: 16,
                         paddingVertical: 16,
                         paddingHorizontal: 16,

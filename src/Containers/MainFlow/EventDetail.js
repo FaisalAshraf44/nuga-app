@@ -377,10 +377,10 @@ class EventDetail extends Component {
                     AppStyles.shadow,
                   ]}>
                   <Text style={[AppStyles.h4, AppStyles.textGreen2]}>
+                    £{' '}
                     {this.userData && this.userData.membership == 'Paid'
                       ? event.fee
-                      : event.guestfee}{' '}
-                    £
+                      : event.guestfee}
                   </Text>
                 </View>
               ) : null}
@@ -455,7 +455,11 @@ class EventDetail extends Component {
                       newParticipant.withdrawn = false;
                       this.saveParticiapnts(newParticipant);
                     } else {
-                      Toast.show('Event Entry is closed');
+                      Alert.alert(
+                        'Register ONLY',
+                        'This event is closed for entry, please email admin@nugagolf.com if you still want to register only and we will confirm back to you via email. Thanks',
+                      );
+                      // Toast.show('Event Entry is closed');
                     }
                   }}
                   buttonStyle={[{backgroundColor: Colors.appColor2}]}
@@ -469,7 +473,11 @@ class EventDetail extends Component {
                       newParticipant.withdrawn = false;
                       this.registerAndPay(newParticipant, event);
                     } else {
-                      Toast.show('Event Entry is closed');
+                      // Toast.show('Event Entry is closed');
+                      Alert.alert(
+                        'Register & Pay',
+                        'This event is closed for entry, please email admin@nugagolf.com if you still want to register & pay and we will confirm back to you via email. Thanks',
+                      );
                     }
                   }}
                   text="Register & Pay"

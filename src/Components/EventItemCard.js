@@ -73,7 +73,7 @@ class EventItemCard extends Component {
                 },
               ]}>
               <Text style={[AppStyles.h5, AppStyles.textGreen2]}>
-                {price} £
+                £ {price}
               </Text>
             </View>
           ) : null}
