@@ -137,8 +137,12 @@ class EventDetail extends Component {
 
     let exists = false;
     let withdrawn = false;
+    let paid = false;
     updatedParticipants.forEach(element => {
       if (element.userId == newParticipant.userId) {
+        if (element.paid == true) {
+          paid = true;
+        }
         if (element.withdrawn == true) {
           element.withdrawn = false;
           exists = false;
@@ -149,7 +153,7 @@ class EventDetail extends Component {
       }
     });
 
-    if (!withdrawn) {
+    if (!withdrawn && !paid) {
       updatedParticipants.push(newParticipant);
     }
 
